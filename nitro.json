@@ -1,0 +1,23 @@
+{
+  "cxxNamespace": ["nitrolocation"],
+  "ios": {
+    "iosModuleName": "NitroLocation"
+  },
+  "android": {
+    "androidNamespace": ["nitrolocation"],
+    "androidCxxLibName": "nitrolocation"
+  },
+  "autolinking": {
+    "NitroLocation": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "NitroLocation"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "NitroLocation"
+      }
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
