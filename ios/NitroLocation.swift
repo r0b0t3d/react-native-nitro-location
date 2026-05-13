@@ -1,42 +1,52 @@
 import CoreLocation
 import NitroModules
 
-class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
+// Separate NSObject delegate forwarder — HybridNitroLocationSpec_base doesn't extend NSObject
+private class LocationDelegate: NSObject, CLLocationManagerDelegate {
+  weak var owner: NitroLocation?
+  init(_ owner: NitroLocation) { self.owner = owner }
+
+  func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    owner?.handleLocations(locations)
+  }
+  func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    owner?.handleHeading(newHeading)
+  }
+  func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    owner?.handleAuthChange(manager.authorizationStatus)
+  }
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    owner?.handleLocationError()
+  }
+}
+
+class NitroLocation: HybridNitroLocationSpec {
   private let manager = CLLocationManager()
+  private lazy var locationDelegate = LocationDelegate(self)
   private var permissionContinuation: CheckedContinuation<Bool, Never>?
   private var locationContinuation: CheckedContinuation<Variant_NullType_Location, Never>?
   private var locationTimeoutTask: Task<Void, Never>?
 
-  // MARK: - Callback properties (HybridNitroLocationSpec)
-  var onLocationUpdate: Variant_NullType____locations___Location______Void = .first(NullType())
-  var onHeadingUpdate: Variant_NullType____heading__Heading_____Void = .first(NullType())
-  var onPermissionUpdate: Variant_NullType____status__LocationPermissionStatus_____Void = .first(NullType())
-  var onSignificantLocationUpdate: Variant_NullType____locations___Location______Void = .first(NullType())
+  // MARK: - Callback properties
+  var onLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
+  var onHeadingUpdate: Variant_NullType____heading__Heading_____Void = .first(.null)
+  var onPermissionUpdate: Variant_NullType____status__LocationPermissionStatus_____Void = .first(.null)
+  var onSignificantLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
 
   public override init() {
     super.init()
-    manager.delegate = self
+    manager.delegate = locationDelegate
   }
 
   // MARK: - Configure
   func configure(options: ConfigureOptions) throws -> Promise<Void> {
     return Promise.async {
       await MainActor.run {
-        if let filter = options.distanceFilter {
-          self.manager.distanceFilter = filter
-        }
-        if let bg = options.allowsBackgroundLocationUpdates {
-          self.manager.allowsBackgroundLocationUpdates = bg
-        }
-        if let indicator = options.showsBackgroundLocationIndicator {
-          self.manager.showsBackgroundLocationIndicator = indicator
-        }
-        if let activityType = options.activityType {
-          self.manager.activityType = Self.mapActivityType(activityType)
-        }
-        if let accuracy = options.desiredAccuracy?.ios {
-          self.manager.desiredAccuracy = Self.mapIosAccuracy(accuracy)
-        }
+        if let filter = options.distanceFilter { self.manager.distanceFilter = filter }
+        if let bg = options.allowsBackgroundLocationUpdates { self.manager.allowsBackgroundLocationUpdates = bg }
+        if let indicator = options.showsBackgroundLocationIndicator { self.manager.showsBackgroundLocationIndicator = indicator }
+        if let activityType = options.activityType { self.manager.activityType = Self.mapActivityType(activityType) }
+        if let accuracy = options.desiredAccuracy?.ios { self.manager.desiredAccuracy = Self.mapIosAccuracy(accuracy) }
       }
     }
   }
@@ -59,9 +69,7 @@ class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
 
   func getCurrentPermission() throws -> Promise<LocationPermissionStatus> {
     return Promise.async {
-      return await MainActor.run {
-        return Self.mapAuthStatus(self.manager.authorizationStatus)
-      }
+      return await MainActor.run { Self.mapAuthStatus(self.manager.authorizationStatus) }
     }
   }
 
@@ -79,9 +87,7 @@ class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
       let maxAge = options.maximumAge ?? 10_000
       if let loc = await MainActor.run(body: { self.manager.location }) {
         let ageMs = -loc.timestamp.timeIntervalSinceNow * 1_000
-        if ageMs < maxAge {
-          return .second(Self.mapLocation(loc))
-        }
+        if ageMs < maxAge { return .second(Self.mapLocation(loc)) }
       }
       let timeout = options.timeout ?? 10_000
       return await withCheckedContinuation { (continuation: CheckedContinuation<Variant_NullType_Location, Never>) in
@@ -94,7 +100,7 @@ class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
               guard let cont = self.locationContinuation else { return }
               self.locationContinuation = nil
               self.locationTimeoutTask = nil
-              cont.resume(returning: .first(NullType()))
+              cont.resume(returning: .first(.null))
             }
           }
         }
@@ -102,8 +108,8 @@ class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
     }
   }
 
-  // MARK: - CLLocationManagerDelegate
-  func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+  // MARK: - Delegate callbacks (called by LocationDelegate)
+  fileprivate func handleLocations(_ locations: [CLLocation]) {
     let mapped = locations.map { Self.mapLocation($0) }
     if case .second(let cb) = onLocationUpdate { cb(mapped) }
     if case .second(let cb) = onSignificantLocationUpdate { cb(mapped) }
@@ -111,17 +117,16 @@ class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
       locationTimeoutTask?.cancel()
       locationTimeoutTask = nil
       locationContinuation = nil
-      cont.resume(returning: mapped.first.map { .second($0) } ?? .first(NullType()))
+      cont.resume(returning: mapped.first.map { .second($0) } ?? .first(.null))
     }
   }
 
-  func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+  fileprivate func handleHeading(_ newHeading: CLHeading) {
     let h = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
     if case .second(let cb) = onHeadingUpdate { cb(Heading(heading: h)) }
   }
 
-  func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-    let status = manager.authorizationStatus
+  fileprivate func handleAuthChange(_ status: CLAuthorizationStatus) {
     let mapped = Self.mapAuthStatus(status)
     if case .second(let cb) = onPermissionUpdate { cb(mapped) }
     guard let cont = permissionContinuation else { return }
@@ -134,12 +139,12 @@ class NitroLocation: HybridNitroLocationSpec, CLLocationManagerDelegate {
     }
   }
 
-  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+  fileprivate func handleLocationError() {
     if let cont = locationContinuation {
       locationContinuation = nil
       locationTimeoutTask?.cancel()
       locationTimeoutTask = nil
-      cont.resume(returning: .first(NullType()))
+      cont.resume(returning: .first(.null))
     }
   }
 

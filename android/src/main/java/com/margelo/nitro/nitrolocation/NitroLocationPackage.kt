@@ -7,7 +7,6 @@ import com.facebook.react.module.model.ReactModuleInfoProvider
 
 class NitroLocationPackage : BaseReactPackage() {
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-        reactAppContext = reactContext
         return null
     }
 
@@ -16,11 +15,8 @@ class NitroLocationPackage : BaseReactPackage() {
     }
 
     companion object {
-        @Volatile
-        var reactAppContext: ReactApplicationContext? = null
-
         init {
-            System.loadLibrary("nitrolocation")
+            nitrolocationOnLoad.initializeNative()
         }
     }
 }
