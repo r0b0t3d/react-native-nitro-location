@@ -2,8 +2,11 @@ import CoreLocation
 import NitroModules
 
 // MARK: - Delegate Forwarder
+// HybridNitroLocationSpec_base does not inherit NSObject,
+// so we bridge CLLocationManagerDelegate separately.
+// CLLocationManager calls delegates on the thread the manager was created on
+// (always main thread when created via DispatchQueue.main.async or lazy init on main).
 
-@MainActor
 private final class LocationDelegate: NSObject, CLLocationManagerDelegate {
 
   weak var owner: NitroLocation?
@@ -16,10 +19,7 @@ private final class LocationDelegate: NSObject, CLLocationManagerDelegate {
     _ manager: CLLocationManager,
     didUpdateLocations locations: [CLLocation]
   ) {
-    owner?.handleLocations(
-      locations,
-      source: manager
-    )
+    owner?.handleLocations(locations, source: manager)
   }
 
   func locationManager(
@@ -32,9 +32,7 @@ private final class LocationDelegate: NSObject, CLLocationManagerDelegate {
   func locationManagerDidChangeAuthorization(
     _ manager: CLLocationManager
   ) {
-    owner?.handleAuthChange(
-      manager.authorizationStatus
-    )
+    owner?.handleAuthChange(manager.authorizationStatus)
   }
 
   func locationManager(
@@ -45,168 +43,99 @@ private final class LocationDelegate: NSObject, CLLocationManagerDelegate {
   }
 }
 
-@MainActor
 final class NitroLocation: HybridNitroLocationSpec {
-
-  // MARK: - Managers
-
-  // Standard streaming + one-shot
-  private let locationManager = CLLocationManager()
-
-  // Dedicated significant-change manager
-  private let significantLocationManager = CLLocationManager()
 
   // MARK: - Delegates
 
-  private lazy var locationDelegate =
-    LocationDelegate(self)
+  private lazy var locationDelegate = LocationDelegate(self)
+
+  // MARK: - Managers
+  // Lazy so delegate assignment happens on first access.
+  // Both managers must be first accessed on the main thread.
+
+  // Standard streaming + one-shot
+  private lazy var locationManager: CLLocationManager = {
+    let m = CLLocationManager()
+    m.delegate = locationDelegate
+    return m
+  }()
+
+  // Dedicated significant-change manager — separate instance so
+  // handleLocations can distinguish sources via identity check.
+  private lazy var significantLocationManager: CLLocationManager = {
+    let m = CLLocationManager()
+    m.delegate = locationDelegate
+    return m
+  }()
 
   // MARK: - Continuations
 
-  private var permissionContinuation:
-    CheckedContinuation<Bool, Never>?
-
-  private var locationContinuation:
-    CheckedContinuation<Variant_NullType_Location, Never>?
+  private var permissionContinuation: CheckedContinuation<Bool, Never>?
+  private var locationContinuation: CheckedContinuation<Variant_NullType_Location, Never>?
 
   // MARK: - Tasks
 
-  private var locationTimeoutTask:
-    Task<Void, Never>?
+  private var locationTimeoutTask: Task<Void, Never>?
 
   // MARK: - State
 
   private var isOneShotUpdating = false
-
   private var isStreamingUpdates = false
-
   private var isMonitoringSignificant = false
-
-  // Freshness threshold for active one-shot request
-  private var currentOneShotMaxAgeMs:
-    Double = 10_000
+  private var currentOneShotMaxAgeMs: Double = 10_000
 
   // MARK: - Callback Properties
 
-  var onLocationUpdate:
-    Variant_NullType____locations___Location______Void =
-      .first(.null)
-
-  var onHeadingUpdate:
-    Variant_NullType____heading__Heading_____Void =
-      .first(.null)
-
-  var onPermissionUpdate:
-    Variant_NullType____status__LocationPermissionStatus_____Void =
-      .first(.null)
-
-  var onSignificantLocationUpdate:
-    Variant_NullType____locations___Location______Void =
-      .first(.null)
+  var onLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
+  var onHeadingUpdate: Variant_NullType____heading__Heading_____Void = .first(.null)
+  var onPermissionUpdate: Variant_NullType____status__LocationPermissionStatus_____Void = .first(.null)
+  var onSignificantLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
 
   // MARK: - Init
 
   public override init() {
     super.init()
-
-    locationManager.delegate = locationDelegate
-
-    significantLocationManager.delegate =
-      locationDelegate
   }
 
-  // IMPORTANT:
-  // deinit is NOT actor-isolated even on @MainActor classes.
-  // Never access actor-isolated state here.
-  deinit { }
+  // MARK: - Lifecycle
 
-  // MARK: - Cleanup
-
-  // MUST be called before releasing module.
-  // Otherwise pending continuations remain unresolved.
   func invalidate() {
-
-    locationManager.stopUpdatingLocation()
-    locationManager.stopUpdatingHeading()
-
-    significantLocationManager
-      .stopMonitoringSignificantLocationChanges()
-
-    locationTimeoutTask?.cancel()
-    locationTimeoutTask = nil
-
-    if let continuation = locationContinuation {
-
-      locationContinuation = nil
-
-      continuation.resume(
-        returning: .first(.null)
-      )
+    DispatchQueue.main.async { [weak self] in
+      guard let self = self else { return }
+      self.locationManager.stopUpdatingLocation()
+      self.locationManager.stopUpdatingHeading()
+      self.significantLocationManager.stopMonitoringSignificantLocationChanges()
+      self.locationTimeoutTask?.cancel()
+      self.locationTimeoutTask = nil
+      if let continuation = self.locationContinuation {
+        self.locationContinuation = nil
+        continuation.resume(returning: .first(.null))
+      }
+      if let continuation = self.permissionContinuation {
+        self.permissionContinuation = nil
+        continuation.resume(returning: false)
+      }
+      self.isStreamingUpdates = false
+      self.isMonitoringSignificant = false
+      self.isOneShotUpdating = false
     }
-
-    if let continuation = permissionContinuation {
-
-      permissionContinuation = nil
-
-      continuation.resume(
-        returning: false
-      )
-    }
-
-    isStreamingUpdates = false
-    isMonitoringSignificant = false
-    isOneShotUpdating = false
   }
 
   // MARK: - Configure
 
-  func configure(
-    options: ConfigureOptions
-  ) throws -> Promise<Void> {
-
+  func configure(options: ConfigureOptions) throws -> Promise<Void> {
     return Promise.async {
-
-      await MainActor.run {
-
+      DispatchQueue.main.async {
         let managers = [
           self.locationManager,
           self.significantLocationManager
         ]
-
         for manager in managers {
-
-          if let filter =
-            options.distanceFilter {
-
-            manager.distanceFilter = filter
-          }
-
-          if let bg =
-            options.allowsBackgroundLocationUpdates {
-
-            manager.allowsBackgroundLocationUpdates = bg
-          }
-
-          if let indicator =
-            options.showsBackgroundLocationIndicator {
-
-            manager.showsBackgroundLocationIndicator =
-              indicator
-          }
-
-          if let activityType =
-            options.activityType {
-
-            manager.activityType =
-              Self.mapActivityType(activityType)
-          }
-
-          if let accuracy =
-            options.desiredAccuracy?.ios {
-
-            manager.desiredAccuracy =
-              Self.mapIosAccuracy(accuracy)
-          }
+          if let filter = options.distanceFilter { manager.distanceFilter = filter }
+          if let bg = options.allowsBackgroundLocationUpdates { manager.allowsBackgroundLocationUpdates = bg }
+          if let indicator = options.showsBackgroundLocationIndicator { manager.showsBackgroundLocationIndicator = indicator }
+          if let activityType = options.activityType { manager.activityType = Self.mapActivityType(activityType) }
+          if let accuracy = options.desiredAccuracy?.ios { manager.desiredAccuracy = Self.mapIosAccuracy(accuracy) }
         }
       }
     }
@@ -214,52 +143,35 @@ final class NitroLocation: HybridNitroLocationSpec {
 
   // MARK: - Permissions
 
-  func requestPermission(
-    options: RequestPermissionOptions
-  ) throws -> Promise<Bool> {
-
+  func requestPermission(options: RequestPermissionOptions) throws -> Promise<Bool> {
     return Promise.async {
-
-      return await MainActor.run {
-
-        await withCheckedContinuation {
-          continuation in
-
+      return await withCheckedContinuation { continuation in
+        DispatchQueue.main.async {
           guard self.permissionContinuation == nil else {
-
             continuation.resume(returning: false)
-
             return
           }
-
-          self.permissionContinuation =
-            continuation
-
+          self.permissionContinuation = continuation
           if options.ios == .always {
-
-            self.locationManager
-              .requestAlwaysAuthorization()
-
+            self.locationManager.requestAlwaysAuthorization()
           } else {
-
-            self.locationManager
-              .requestWhenInUseAuthorization()
+            self.locationManager.requestWhenInUseAuthorization()
           }
         }
       }
     }
   }
 
-  func getCurrentPermission()
-    throws -> Promise<LocationPermissionStatus> {
-
+  func getCurrentPermission() throws -> Promise<LocationPermissionStatus> {
     return Promise.async {
-
-      await MainActor.run {
-
-        Self.mapAuthStatus(
-          self.locationManager.authorizationStatus
-        )
+      return await withCheckedContinuation { continuation in
+        DispatchQueue.main.async {
+          continuation.resume(
+            returning: Self.mapAuthStatus(
+              self.locationManager.authorizationStatus
+            )
+          )
+        }
       }
     }
   }
@@ -267,191 +179,107 @@ final class NitroLocation: HybridNitroLocationSpec {
   // MARK: - Streaming
 
   func startLocationUpdates() throws {
-
-    isStreamingUpdates = true
-
-    locationManager.startUpdatingLocation()
+    DispatchQueue.main.async {
+      self.isStreamingUpdates = true
+      self.locationManager.startUpdatingLocation()
+    }
   }
 
   func stopLocationUpdates() throws {
-
-    isStreamingUpdates = false
-
-    // Keep updates alive if one-shot still active
-    if !isOneShotUpdating {
-
-      locationManager.stopUpdatingLocation()
+    DispatchQueue.main.async {
+      self.isStreamingUpdates = false
+      if !self.isOneShotUpdating {
+        self.locationManager.stopUpdatingLocation()
+      }
     }
   }
 
-  // MARK: - Heading
-
   func startHeadingUpdates() throws {
-
-    guard CLLocationManager.headingAvailable()
-    else {
-      return
+    DispatchQueue.main.async {
+      guard CLLocationManager.headingAvailable() else { return }
+      self.locationManager.startUpdatingHeading()
     }
-
-    locationManager.startUpdatingHeading()
   }
 
   func stopHeadingUpdates() throws {
-
-    locationManager.stopUpdatingHeading()
+    DispatchQueue.main.async {
+      self.locationManager.stopUpdatingHeading()
+    }
   }
 
-  // MARK: - Significant Updates
-
-  func startSignificantLocationUpdates()
-    throws {
-
-    isMonitoringSignificant = true
-
-    significantLocationManager
-      .startMonitoringSignificantLocationChanges()
+  func startSignificantLocationUpdates() throws {
+    DispatchQueue.main.async {
+      self.isMonitoringSignificant = true
+      self.significantLocationManager.startMonitoringSignificantLocationChanges()
+    }
   }
 
-  func stopSignificantLocationUpdates()
-    throws {
-
-    isMonitoringSignificant = false
-
-    significantLocationManager
-      .stopMonitoringSignificantLocationChanges()
+  func stopSignificantLocationUpdates() throws {
+    DispatchQueue.main.async {
+      self.isMonitoringSignificant = false
+      self.significantLocationManager.stopMonitoringSignificantLocationChanges()
+    }
   }
 
   // MARK: - One-shot Location
+  // Requires NSLocationWhenInUseUsageDescription in Info.plist.
+  // Uses startUpdatingLocation() instead of requestLocation() for reliability
+  // on real devices: cold GPS start, indoors, reduced accuracy, low power mode.
 
-  func getLatestLocation(
-    options: GetLatestLocationOptions
-  ) throws -> Promise<Variant_NullType_Location> {
-
+  func getLatestLocation(options: GetLatestLocationOptions) throws -> Promise<Variant_NullType_Location> {
     return Promise.async {
+      let maxAge = options.maximumAge ?? 10_000
+      let timeout = options.timeout ?? 10_000
 
-      await MainActor.run {
+      return await withCheckedContinuation { continuation in
+        DispatchQueue.main.async {
 
-        let maxAge =
-          options.maximumAge ?? 10_000
-
-        self.currentOneShotMaxAgeMs =
-          maxAge
-
-        // Fast cached path
-        if let cached =
-          self.locationManager.location {
-
-          let ageMs =
-            -cached.timestamp
-              .timeIntervalSinceNow * 1_000
-
-          if ageMs <= maxAge {
-
-            return .second(
-              Self.mapLocation(cached)
-            )
+          // Fast path: reuse cached location if fresh enough.
+          // When streaming is active, skip the age check — the stream keeps the cache current.
+          if let cached = self.locationManager.location {
+            let ageMs = -cached.timestamp.timeIntervalSinceNow * 1_000
+            if ageMs <= maxAge || self.isStreamingUpdates {
+              continuation.resume(returning: .second(Self.mapLocation(cached)))
+              return
+            }
           }
-        }
-
-        let timeout =
-          options.timeout ?? 10_000
-
-        return await withCheckedContinuation {
-          continuation in
 
           // Prevent concurrent one-shot requests
-          guard self.locationContinuation == nil
-          else {
-
-            continuation.resume(
-              returning: .first(.null)
-            )
-
+          guard self.locationContinuation == nil else {
+            continuation.resume(returning: .first(.null))
             return
           }
 
-          let status =
-            self.locationManager
-              .authorizationStatus
-
-          guard status == .authorizedAlways ||
-                status == .authorizedWhenInUse
-          else {
-
-            continuation.resume(
-              returning: .first(.null)
-            )
-
+          let status = self.locationManager.authorizationStatus
+          guard status == .authorizedAlways || status == .authorizedWhenInUse else {
+            continuation.resume(returning: .first(.null))
             return
           }
 
-          self.locationContinuation =
-            continuation
-
+          self.currentOneShotMaxAgeMs = maxAge
+          self.locationContinuation = continuation
           self.isOneShotUpdating = true
-
-          // More reliable than requestLocation()
-          self.locationManager
-            .startUpdatingLocation()
+          self.locationManager.startUpdatingLocation()
 
           self.locationTimeoutTask = Task {
-
-            // Prevent UInt64 conversion crash
-            let safeNs: UInt64
-
-            if timeout.isFinite &&
-                timeout >= 0 &&
-                timeout < 1.8e16 {
-
-              safeNs =
-                UInt64(timeout) * 1_000_000
-
-            } else {
-
-              safeNs = UInt64.max
-            }
+            let safeNs: UInt64 = timeout.isFinite && timeout >= 0 && timeout < 1.8e16
+              ? UInt64(timeout) * 1_000_000
+              : UInt64.max
 
             do {
-
-              try await Task.sleep(
-                nanoseconds: safeNs
-              )
-
+              try await Task.sleep(nanoseconds: safeNs)
             } catch {
+              // Cancelled — continuation already resolved by handleLocations/invalidate
+              return
+            }
 
-              // External cancellation:
-              // resolve pending continuation safely
-
-              guard let continuation =
-                self.locationContinuation else {
-                return
-              }
-
+            DispatchQueue.main.async {
+              guard let cont = self.locationContinuation else { return }
               self.locationContinuation = nil
               self.locationTimeoutTask = nil
-
               self.stopOneShotUpdatesIfNeeded()
-
-              continuation.resume(
-                returning: .first(.null)
-              )
-
-              return
+              cont.resume(returning: .first(.null))
             }
-
-            guard let continuation =
-              self.locationContinuation else {
-              return
-            }
-
-            self.locationContinuation = nil
-            self.locationTimeoutTask = nil
-
-            self.stopOneShotUpdatesIfNeeded()
-
-            continuation.resume(
-              returning: .first(.null)
-            )
           }
         }
       }
@@ -459,245 +287,107 @@ final class NitroLocation: HybridNitroLocationSpec {
   }
 
   // MARK: - Delegate Handlers
+  // Called on main thread by CLLocationManager.
 
   fileprivate func handleLocations(
     _ locations: [CLLocation],
     source manager: CLLocationManager
   ) {
+    guard !locations.isEmpty else { return }
 
-    guard !locations.isEmpty else {
-      return
+    let mapped = locations.map(Self.mapLocation)
+
+    if manager === locationManager, isStreamingUpdates {
+      if case .second(let callback) = onLocationUpdate { callback(mapped) }
     }
 
-    let mapped =
-      locations.map(Self.mapLocation)
-
-    // Streaming callbacks ONLY during streaming mode
-    if manager === locationManager,
-       isStreamingUpdates {
-
-      if case .second(let callback) =
-        onLocationUpdate {
-
-        callback(mapped)
-      }
+    if manager === significantLocationManager, isMonitoringSignificant {
+      if case .second(let callback) = onSignificantLocationUpdate { callback(mapped) }
     }
 
-    // Significant callbacks ONLY from dedicated manager
-    if manager === significantLocationManager,
-       isMonitoringSignificant {
+    guard manager === locationManager else { return }
+    guard let continuation = locationContinuation else { return }
 
-      if case .second(let callback) =
-        onSignificantLocationUpdate {
-
-        callback(mapped)
-      }
-    }
-
-    // One-shot resolution only from primary manager
-    guard manager === locationManager else {
-      return
-    }
-
-    guard let continuation =
-      locationContinuation else {
-      return
-    }
-
-    // Respect caller maximumAge
-    let freshnessSeconds =
-      min(
-        currentOneShotMaxAgeMs / 1_000,
-        15
-      )
-
-    guard let freshLocation =
-      locations.first(where: {
-
-        abs(
-          $0.timestamp.timeIntervalSinceNow
-        ) < freshnessSeconds
-
-      }) else {
-      return
-    }
+    // Filter stale cached fixes during one-shot — threshold respects maximumAge
+    let thresholdSec = min(currentOneShotMaxAgeMs / 1_000, 15)
+    guard let freshLocation = locations.first(where: {
+      abs($0.timestamp.timeIntervalSinceNow) < thresholdSec
+    }) else { return }
 
     locationTimeoutTask?.cancel()
     locationTimeoutTask = nil
-
     locationContinuation = nil
-
     stopOneShotUpdatesIfNeeded()
-
-    continuation.resume(
-      returning:
-        .second(
-          Self.mapLocation(freshLocation)
-        )
-    )
+    continuation.resume(returning: .second(Self.mapLocation(freshLocation)))
   }
 
-  fileprivate func handleHeading(
-    _ newHeading: CLHeading
-  ) {
-
-    let heading =
-      newHeading.trueHeading >= 0
+  fileprivate func handleHeading(_ newHeading: CLHeading) {
+    let heading = newHeading.trueHeading >= 0
       ? newHeading.trueHeading
       : newHeading.magneticHeading
-
-    if case .second(let callback) =
-      onHeadingUpdate {
-
-      callback(
-        Heading(heading: heading)
-      )
+    if case .second(let callback) = onHeadingUpdate {
+      callback(Heading(heading: heading))
     }
   }
 
-  fileprivate func handleAuthChange(
-    _ status: CLAuthorizationStatus
-  ) {
+  fileprivate func handleAuthChange(_ status: CLAuthorizationStatus) {
+    let mapped = Self.mapAuthStatus(status)
+    if case .second(let callback) = onPermissionUpdate { callback(mapped) }
 
-    let mapped =
-      Self.mapAuthStatus(status)
-
-    if case .second(let callback) =
-      onPermissionUpdate {
-
-      callback(mapped)
-    }
-
-    guard let continuation =
-      permissionContinuation else {
-      return
-    }
+    guard let continuation = permissionContinuation else { return }
 
     switch status {
-
-    case .authorizedAlways,
-         .authorizedWhenInUse:
-
+    case .authorizedAlways, .authorizedWhenInUse:
       permissionContinuation = nil
-
-      continuation.resume(
-        returning: true
-      )
-
-    case .denied,
-         .restricted:
-
+      continuation.resume(returning: true)
+    case .denied, .restricted:
       permissionContinuation = nil
-
-      continuation.resume(
-        returning: false
-      )
-
+      continuation.resume(returning: false)
     case .notDetermined:
       break
-
     @unknown default:
-
       permissionContinuation = nil
-
-      continuation.resume(
-        returning: false
-      )
+      continuation.resume(returning: false)
     }
   }
 
-  fileprivate func handleLocationError(
-    _ error: Error
-  ) {
+  fileprivate func handleLocationError(_ error: Error) {
+    // locationUnknown is a transient GPS warmup error — keep waiting
+    if let clError = error as? CLError, clError.code == .locationUnknown { return }
 
-    // Temporary GPS warmup issue
-    if let clError = error as? CLError,
-       clError.code == .locationUnknown {
-
-      return
-    }
-
-    guard let continuation =
-      locationContinuation else {
-      return
-    }
-
+    guard let continuation = locationContinuation else { return }
     locationContinuation = nil
-
     locationTimeoutTask?.cancel()
     locationTimeoutTask = nil
-
     stopOneShotUpdatesIfNeeded()
-
-    continuation.resume(
-      returning: .first(.null)
-    )
+    continuation.resume(returning: .first(.null))
   }
 
   // MARK: - Helpers
 
   private func stopOneShotUpdatesIfNeeded() {
-
-    guard isOneShotUpdating else {
-      return
-    }
-
+    guard isOneShotUpdating else { return }
     isOneShotUpdating = false
-
     if !isStreamingUpdates {
-
       locationManager.stopUpdatingLocation()
     }
   }
 
   // MARK: - Mapping
 
-  private static func mapLocation(
-    _ location: CLLocation
-  ) -> Location {
-
+  private static func mapLocation(_ location: CLLocation) -> Location {
     return Location(
-
-      timestamp:
-        location.timestamp
-          .timeIntervalSince1970 * 1_000,
-
-      latitude:
-        location.coordinate.latitude,
-
-      longitude:
-        location.coordinate.longitude,
-
-      accuracy:
-        location.horizontalAccuracy,
-
-      altitude:
-        location.altitude,
-
-      altitudeAccuracy:
-        location.verticalAccuracy,
-
-      course:
-        location.course,
-
-      courseAccuracy:
-        location.courseAccuracy >= 0
-        ? location.courseAccuracy
-        : nil,
-
-      speed:
-        location.speed,
-
-      speedAccuracy:
-        location.speedAccuracy >= 0
-        ? location.speedAccuracy
-        : nil,
-
-      floor:
-        location.floor.map {
-          Double($0.level)
-        },
-
+      timestamp: location.timestamp.timeIntervalSince1970 * 1_000,
+      latitude: location.coordinate.latitude,
+      longitude: location.coordinate.longitude,
+      accuracy: location.horizontalAccuracy,
+      altitude: location.altitude,
+      altitudeAccuracy: location.verticalAccuracy,
+      course: location.course,
+      courseAccuracy: location.courseAccuracy >= 0 ? location.courseAccuracy : nil,
+      speed: location.speed,
+      speedAccuracy: location.speedAccuracy >= 0 ? location.speedAccuracy : nil,
+      floor: location.floor.map { Double($0.level) },
       fromMockProvider: nil
     )
   }
@@ -705,83 +395,38 @@ final class NitroLocation: HybridNitroLocationSpec {
   private static func mapAuthStatus(
     _ status: CLAuthorizationStatus
   ) -> LocationPermissionStatus {
-
     switch status {
-
-    case .authorizedAlways:
-      return .authorizedalways
-
-    case .authorizedWhenInUse:
-      return .authorizedwheninuse
-
-    case .denied:
-      return .denied
-
-    case .restricted:
-      return .restricted
-
-    case .notDetermined:
-      return .notdetermined
-
-    @unknown default:
-      return .notdetermined
+    case .authorizedAlways: return .authorizedalways
+    case .authorizedWhenInUse: return .authorizedwheninuse
+    case .denied: return .denied
+    case .restricted: return .restricted
+    case .notDetermined: return .notdetermined
+    @unknown default: return .notdetermined
     }
   }
 
   private static func mapIosAccuracy(
     _ accuracy: IosDesiredAccuracy
   ) -> CLLocationAccuracy {
-
     switch accuracy {
-
-    case .bestfornavigation:
-      return kCLLocationAccuracyBestForNavigation
-
-    case .best:
-      return kCLLocationAccuracyBest
-
-    case .nearesttenmeters:
-      return kCLLocationAccuracyNearestTenMeters
-
-    case .hundredmeters:
-      return kCLLocationAccuracyHundredMeters
-
-    case .threekilometers:
-      return kCLLocationAccuracyThreeKilometers
-
-    @unknown default:
-      return kCLLocationAccuracyBest
+    case .bestfornavigation: return kCLLocationAccuracyBestForNavigation
+    case .best: return kCLLocationAccuracyBest
+    case .nearesttenmeters: return kCLLocationAccuracyNearestTenMeters
+    case .hundredmeters: return kCLLocationAccuracyHundredMeters
+    case .threekilometers: return kCLLocationAccuracyThreeKilometers
+    @unknown default: return kCLLocationAccuracyBest
     }
   }
 
-  private static func mapActivityType(
-    _ type: ActivityType
-  ) -> CLActivityType {
-
+  private static func mapActivityType(_ type: ActivityType) -> CLActivityType {
     switch type {
-
-    case .other:
-      return .other
-
-    case .automotivenavigation:
-      return .automotiveNavigation
-
-    case .fitness:
-      return .fitness
-
-    case .othernavigation:
-      return .otherNavigation
-
+    case .other: return .other
+    case .automotivenavigation: return .automotiveNavigation
+    case .fitness: return .fitness
+    case .othernavigation: return .otherNavigation
     case .airborne:
-
-      if #available(iOS 12.0, *) {
-        return .airborne
-      } else {
-        return .other
-      }
-
-    @unknown default:
-      return .other
+      if #available(iOS 12.0, *) { return .airborne } else { return .other }
+    @unknown default: return .other
     }
   }
 }
