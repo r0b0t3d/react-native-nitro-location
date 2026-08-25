@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "IosPermissionType" and the the Kotlin enum "IosPermissionType".
+   * The C++ JNI bridge between the C++ enum "IosPermissionType" and the Kotlin enum "IosPermissionType".
    */
   struct JIosPermissionType final: public jni::JavaClass<JIosPermissionType> {
   public:

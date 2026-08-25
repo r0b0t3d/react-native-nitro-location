@@ -27,7 +27,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "ConfigureOptions" and the the Kotlin data class "ConfigureOptions".
+   * The C++ JNI bridge between the C++ struct "ConfigureOptions" and the Kotlin data class "ConfigureOptions".
    */
   struct JConfigureOptions final: public jni::JavaClass<JConfigureOptions> {
   public:

@@ -35,7 +35,7 @@ data class GetLatestLocationOptions(
   }
 
   override fun hashCode(): Int {
-    return arrayOf(
+    return arrayOf<Any?>(
       timeout,
       maximumAge
     ).contentDeepHashCode()

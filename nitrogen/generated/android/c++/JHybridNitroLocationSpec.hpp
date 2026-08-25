@@ -50,14 +50,16 @@ namespace margelo::nitro::nitrolocation {
 
   public:
     // Properties
-    std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> getOnLocationUpdate() override;
-    void setOnLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onLocationUpdate) override;
-    std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>> getOnHeadingUpdate() override;
-    void setOnHeadingUpdate(const std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>>& onHeadingUpdate) override;
-    std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>> getOnPermissionUpdate() override;
-    void setOnPermissionUpdate(const std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>>& onPermissionUpdate) override;
-    std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> getOnSignificantLocationUpdate() override;
-    void setOnSignificantLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onSignificantLocationUpdate) override;
+    std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> getOnLocationUpdate() override;
+    void setOnLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onLocationUpdate) override;
+    std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType> getOnHeadingUpdate() override;
+    void setOnHeadingUpdate(const std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType>& onHeadingUpdate) override;
+    std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType> getOnPermissionUpdate() override;
+    void setOnPermissionUpdate(const std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType>& onPermissionUpdate) override;
+    std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> getOnSignificantLocationUpdate() override;
+    void setOnSignificantLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onSignificantLocationUpdate) override;
+    std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType> getOnGeofenceTransition() override;
+    void setOnGeofenceTransition(const std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType>& onGeofenceTransition) override;
 
   public:
     // Methods
@@ -71,6 +73,9 @@ namespace margelo::nitro::nitrolocation {
     void stopHeadingUpdates() override;
     void startSignificantLocationUpdates() override;
     void stopSignificantLocationUpdates() override;
+    std::shared_ptr<Promise<StartMonitoringGeofencesResult>> startMonitoringGeofences(const std::vector<GeofenceRegion>& regions) override;
+    void stopMonitoringGeofences() override;
+    std::variant<nitro::NullType, GeofenceTransitionEvent> getPendingGeofenceTransition() override;
 
   private:
     jni::global_ref<JHybridNitroLocationSpec::JavaPart> _javaPart;

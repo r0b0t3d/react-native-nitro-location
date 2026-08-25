@@ -19,6 +19,7 @@
 #include "JFunc_void_std__vector_Location_.hpp"
 #include "JFunc_void_Heading.hpp"
 #include "JFunc_void_LocationPermissionStatus.hpp"
+#include "JFunc_void_GeofenceTransitionEvent.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::nitrolocation {
@@ -47,6 +48,7 @@ void registerAllNatives() {
   margelo::nitro::nitrolocation::JFunc_void_std__vector_Location__cxx::registerNatives();
   margelo::nitro::nitrolocation::JFunc_void_Heading_cxx::registerNatives();
   margelo::nitro::nitrolocation::JFunc_void_LocationPermissionStatus_cxx::registerNatives();
+  margelo::nitro::nitrolocation::JFunc_void_GeofenceTransitionEvent_cxx::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(

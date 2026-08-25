@@ -10,7 +10,6 @@ package com.margelo.nitro.nitrolocation
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import dalvik.annotation.optimization.FastNative
 
 
 /**
@@ -59,7 +58,6 @@ class Func_void_std__vector_Location__cxx: Func_void_std__vector_Location_ {
   override fun invoke(locations: Array<Location>): Unit
     = invoke_cxx(locations)
 
-  @FastNative
   private external fun invoke_cxx(locations: Array<Location>): Unit
 }
 

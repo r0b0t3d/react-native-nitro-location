@@ -10,7 +10,6 @@ package com.margelo.nitro.nitrolocation
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import dalvik.annotation.optimization.FastNative
 
 
 /**
@@ -59,7 +58,6 @@ class Func_void_Heading_cxx: Func_void_Heading {
   override fun invoke(heading: Heading): Unit
     = invoke_cxx(heading)
 
-  @FastNative
   private external fun invoke_cxx(heading: Heading): Unit
 }
 

@@ -21,7 +21,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "DesiredAccuracy" and the the Kotlin data class "DesiredAccuracy".
+   * The C++ JNI bridge between the C++ struct "DesiredAccuracy" and the Kotlin data class "DesiredAccuracy".
    */
   struct JDesiredAccuracy final: public jni::JavaClass<JDesiredAccuracy> {
   public:

@@ -36,10 +36,12 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridNitroLocationSpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridNitroLocationSpec.cpp
-  ../nitrogen/generated/android/c++/JVariant_NullType__locations__Array_Location______Unit.cpp
-  ../nitrogen/generated/android/c++/JVariant_NullType__heading__Heading_____Unit.cpp
-  ../nitrogen/generated/android/c++/JVariant_NullType__status__LocationPermissionStatus_____Unit.cpp
+  ../nitrogen/generated/android/c++/JVariant__locations__Array_Location______Unit_NullType.cpp
+  ../nitrogen/generated/android/c++/JVariant__heading__Heading_____Unit_NullType.cpp
+  ../nitrogen/generated/android/c++/JVariant__status__LocationPermissionStatus_____Unit_NullType.cpp
+  ../nitrogen/generated/android/c++/JVariant__event__GeofenceTransitionEvent_____Unit_NullType.cpp
   ../nitrogen/generated/android/c++/JVariant_NullType_Location.cpp
+  ../nitrogen/generated/android/c++/JVariant_NullType_GeofenceTransitionEvent.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

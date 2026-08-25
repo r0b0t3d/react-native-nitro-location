@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "ActivityType" and the the Kotlin enum "ActivityType".
+   * The C++ JNI bridge between the C++ enum "ActivityType" and the Kotlin enum "ActivityType".
    */
   struct JActivityType final: public jni::JavaClass<JActivityType> {
   public:

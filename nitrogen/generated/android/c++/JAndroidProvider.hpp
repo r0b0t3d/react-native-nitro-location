@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "AndroidProvider" and the the Kotlin enum "AndroidProvider".
+   * The C++ JNI bridge between the C++ enum "AndroidProvider" and the Kotlin enum "AndroidProvider".
    */
   struct JAndroidProvider final: public jni::JavaClass<JAndroidProvider> {
   public:

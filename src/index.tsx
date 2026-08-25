@@ -7,6 +7,9 @@ import type {
   ConfigureOptions,
   RequestPermissionOptions,
   GetLatestLocationOptions,
+  GeofenceRegion,
+  GeofenceTransitionEvent,
+  StartMonitoringGeofencesResult,
 } from './NitroLocation.nitro';
 
 export type {
@@ -23,6 +26,9 @@ export type {
   ConfigureOptions,
   RequestPermissionOptions,
   GetLatestLocationOptions,
+  GeofenceRegion,
+  GeofenceTransitionEvent,
+  StartMonitoringGeofencesResult,
 } from './NitroLocation.nitro';
 
 export type Subscription = () => void;
@@ -84,3 +90,23 @@ export function subscribeToSignificantLocationUpdates(
     hybrid.stopSignificantLocationUpdates();
   };
 }
+
+export function subscribeToGeofenceTransitions(
+  listener: (event: GeofenceTransitionEvent) => void
+): Subscription {
+  hybrid.onGeofenceTransition = listener;
+  return () => {
+    hybrid.onGeofenceTransition = null;
+  };
+}
+
+export const startMonitoringGeofences = (
+  regions: GeofenceRegion[]
+): Promise<StartMonitoringGeofencesResult> =>
+  hybrid.startMonitoringGeofences(regions);
+
+export const stopMonitoringGeofences = (): void =>
+  hybrid.stopMonitoringGeofences();
+
+export const getPendingGeofenceTransition =
+  (): GeofenceTransitionEvent | null => hybrid.getPendingGeofenceTransition();

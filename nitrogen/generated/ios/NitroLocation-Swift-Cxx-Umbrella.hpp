@@ -20,6 +20,12 @@ namespace margelo::nitro::nitrolocation { enum class AndroidProvider; }
 namespace margelo::nitro::nitrolocation { struct ConfigureOptions; }
 // Forward declaration of `DesiredAccuracy` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct DesiredAccuracy; }
+// Forward declaration of `GeofenceRegion` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceRegion; }
+// Forward declaration of `GeofenceTransitionEvent` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceTransitionEvent; }
+// Forward declaration of `GeofenceTransitionType` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { enum class GeofenceTransitionType; }
 // Forward declaration of `GetLatestLocationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct GetLatestLocationOptions; }
 // Forward declaration of `Heading` to properly resolve imports.
@@ -36,6 +42,8 @@ namespace margelo::nitro::nitrolocation { enum class LocationPermissionStatus; }
 namespace margelo::nitro::nitrolocation { struct Location; }
 // Forward declaration of `RequestPermissionOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct RequestPermissionOptions; }
+// Forward declaration of `StartMonitoringGeofencesResult` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct StartMonitoringGeofencesResult; }
 
 // Include C++ defined types
 #include "ActivityType.hpp"
@@ -44,6 +52,9 @@ namespace margelo::nitro::nitrolocation { struct RequestPermissionOptions; }
 #include "AndroidProvider.hpp"
 #include "ConfigureOptions.hpp"
 #include "DesiredAccuracy.hpp"
+#include "GeofenceRegion.hpp"
+#include "GeofenceTransitionEvent.hpp"
+#include "GeofenceTransitionType.hpp"
 #include "GetLatestLocationOptions.hpp"
 #include "Heading.hpp"
 #include "HybridNitroLocationSpec.hpp"
@@ -52,6 +63,7 @@ namespace margelo::nitro::nitrolocation { struct RequestPermissionOptions; }
 #include "Location.hpp"
 #include "LocationPermissionStatus.hpp"
 #include "RequestPermissionOptions.hpp"
+#include "StartMonitoringGeofencesResult.hpp"
 #include <NitroModules/Null.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
@@ -59,6 +71,7 @@ namespace margelo::nitro::nitrolocation { struct RequestPermissionOptions; }
 #include <functional>
 #include <memory>
 #include <optional>
+#include <string>
 #include <variant>
 #include <vector>
 

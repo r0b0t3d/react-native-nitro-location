@@ -70,6 +70,22 @@ namespace margelo::nitro::nitrolocation::bridge::swift {
     };
   }
   
+  // pragma MARK: std::function<void(const GeofenceTransitionEvent& /* event */)>
+  Func_void_GeofenceTransitionEvent create_Func_void_GeofenceTransitionEvent(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroLocation::Func_void_GeofenceTransitionEvent::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const GeofenceTransitionEvent& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const StartMonitoringGeofencesResult& /* result */)>
+  Func_void_StartMonitoringGeofencesResult create_Func_void_StartMonitoringGeofencesResult(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroLocation::Func_void_StartMonitoringGeofencesResult::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const StartMonitoringGeofencesResult& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
   // pragma MARK: std::shared_ptr<HybridNitroLocationSpec>
   std::shared_ptr<HybridNitroLocationSpec> create_std__shared_ptr_HybridNitroLocationSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     NitroLocation::HybridNitroLocationSpec_cxx swiftPart = NitroLocation::HybridNitroLocationSpec_cxx::fromUnsafe(swiftUnsafePointer);

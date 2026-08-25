@@ -35,7 +35,7 @@ data class RequestPermissionOptions(
   }
 
   override fun hashCode(): Int {
-    return arrayOf(
+    return arrayOf<Any?>(
       ios,
       android
     ).contentDeepHashCode()

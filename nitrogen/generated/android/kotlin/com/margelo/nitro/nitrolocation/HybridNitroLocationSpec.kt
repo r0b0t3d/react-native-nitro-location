@@ -10,6 +10,7 @@ package com.margelo.nitro.nitrolocation
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import dalvik.annotation.optimization.FastNative
 import com.margelo.nitro.core.NullType
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
@@ -31,25 +32,31 @@ abstract class HybridNitroLocationSpec: HybridObject() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var onLocationUpdate: Variant_NullType__locations__Array_Location______Unit
+  abstract var onLocationUpdate: Variant__locations__Array_Location______Unit_NullType
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var onHeadingUpdate: Variant_NullType__heading__Heading_____Unit
+  abstract var onHeadingUpdate: Variant__heading__Heading_____Unit_NullType
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var onPermissionUpdate: Variant_NullType__status__LocationPermissionStatus_____Unit
+  abstract var onPermissionUpdate: Variant__status__LocationPermissionStatus_____Unit_NullType
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var onSignificantLocationUpdate: Variant_NullType__locations__Array_Location______Unit
+  abstract var onSignificantLocationUpdate: Variant__locations__Array_Location______Unit_NullType
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var onGeofenceTransition: Variant__event__GeofenceTransitionEvent_____Unit_NullType
 
   // Methods
   @DoNotStrip
@@ -91,6 +98,18 @@ abstract class HybridNitroLocationSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun stopSignificantLocationUpdates(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startMonitoringGeofences(regions: Array<GeofenceRegion>): Promise<StartMonitoringGeofencesResult>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun stopMonitoringGeofences(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getPendingGeofenceTransition(): Variant_NullType_GeofenceTransitionEvent
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
@@ -102,6 +121,7 @@ abstract class HybridNitroLocationSpec: HybridObject() {
   @Keep
   protected open class CxxPart(javaPart: HybridNitroLocationSpec): HybridObject.CxxPart(javaPart) {
     // C++ JHybridNitroLocationSpec::CxxPart::initHybrid(...)
+    @FastNative
     external override fun initHybrid(): HybridData
   }
   override fun createCxxPart(): CxxPart {

@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "AndroidPermissionDetail" and the the Kotlin enum "AndroidPermissionDetail".
+   * The C++ JNI bridge between the C++ enum "AndroidPermissionDetail" and the Kotlin enum "AndroidPermissionDetail".
    */
   struct JAndroidPermissionDetail final: public jni::JavaClass<JAndroidPermissionDetail> {
   public:

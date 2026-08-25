@@ -10,10 +10,11 @@ import NitroModules
 /// See ``HybridNitroLocationSpec``
 public protocol HybridNitroLocationSpec_protocol: HybridObject {
   // Properties
-  var onLocationUpdate: Variant_NullType____locations___Location______Void { get set }
-  var onHeadingUpdate: Variant_NullType____heading__Heading_____Void { get set }
-  var onPermissionUpdate: Variant_NullType____status__LocationPermissionStatus_____Void { get set }
-  var onSignificantLocationUpdate: Variant_NullType____locations___Location______Void { get set }
+  var onLocationUpdate: Variant____locations___Location______Void_NullType { get set }
+  var onHeadingUpdate: Variant____heading__Heading_____Void_NullType { get set }
+  var onPermissionUpdate: Variant____status__LocationPermissionStatus_____Void_NullType { get set }
+  var onSignificantLocationUpdate: Variant____locations___Location______Void_NullType { get set }
+  var onGeofenceTransition: Variant____event__GeofenceTransitionEvent_____Void_NullType { get set }
 
   // Methods
   func configure(options: ConfigureOptions) throws -> Promise<Void>
@@ -26,6 +27,9 @@ public protocol HybridNitroLocationSpec_protocol: HybridObject {
   func stopHeadingUpdates() throws -> Void
   func startSignificantLocationUpdates() throws -> Void
   func stopSignificantLocationUpdates() throws -> Void
+  func startMonitoringGeofences(regions: [GeofenceRegion]) throws -> Promise<StartMonitoringGeofencesResult>
+  func stopMonitoringGeofences() throws -> Void
+  func getPendingGeofenceTransition() throws -> Variant_NullType_GeofenceTransitionEvent
 }
 
 public extension HybridNitroLocationSpec_protocol {

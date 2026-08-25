@@ -19,24 +19,33 @@ namespace margelo::nitro::nitrolocation { struct Location; }
 namespace margelo::nitro::nitrolocation { struct Heading; }
 // Forward declaration of `LocationPermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { enum class LocationPermissionStatus; }
+// Forward declaration of `GeofenceTransitionEvent` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceTransitionEvent; }
 // Forward declaration of `ConfigureOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct ConfigureOptions; }
 // Forward declaration of `RequestPermissionOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct RequestPermissionOptions; }
 // Forward declaration of `GetLatestLocationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct GetLatestLocationOptions; }
+// Forward declaration of `StartMonitoringGeofencesResult` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct StartMonitoringGeofencesResult; }
+// Forward declaration of `GeofenceRegion` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceRegion; }
 
-#include <NitroModules/Null.hpp>
 #include "Location.hpp"
 #include <vector>
 #include <functional>
+#include <NitroModules/Null.hpp>
 #include <variant>
 #include "Heading.hpp"
 #include "LocationPermissionStatus.hpp"
+#include "GeofenceTransitionEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "ConfigureOptions.hpp"
 #include "RequestPermissionOptions.hpp"
 #include "GetLatestLocationOptions.hpp"
+#include "StartMonitoringGeofencesResult.hpp"
+#include "GeofenceRegion.hpp"
 
 namespace margelo::nitro::nitrolocation {
 
@@ -65,14 +74,16 @@ namespace margelo::nitro::nitrolocation {
 
     public:
       // Properties
-      virtual std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> getOnLocationUpdate() = 0;
-      virtual void setOnLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onLocationUpdate) = 0;
-      virtual std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>> getOnHeadingUpdate() = 0;
-      virtual void setOnHeadingUpdate(const std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>>& onHeadingUpdate) = 0;
-      virtual std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>> getOnPermissionUpdate() = 0;
-      virtual void setOnPermissionUpdate(const std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>>& onPermissionUpdate) = 0;
-      virtual std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> getOnSignificantLocationUpdate() = 0;
-      virtual void setOnSignificantLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onSignificantLocationUpdate) = 0;
+      virtual std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> getOnLocationUpdate() = 0;
+      virtual void setOnLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onLocationUpdate) = 0;
+      virtual std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType> getOnHeadingUpdate() = 0;
+      virtual void setOnHeadingUpdate(const std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType>& onHeadingUpdate) = 0;
+      virtual std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType> getOnPermissionUpdate() = 0;
+      virtual void setOnPermissionUpdate(const std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType>& onPermissionUpdate) = 0;
+      virtual std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> getOnSignificantLocationUpdate() = 0;
+      virtual void setOnSignificantLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onSignificantLocationUpdate) = 0;
+      virtual std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType> getOnGeofenceTransition() = 0;
+      virtual void setOnGeofenceTransition(const std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType>& onGeofenceTransition) = 0;
 
     public:
       // Methods
@@ -86,6 +97,9 @@ namespace margelo::nitro::nitrolocation {
       virtual void stopHeadingUpdates() = 0;
       virtual void startSignificantLocationUpdates() = 0;
       virtual void stopSignificantLocationUpdates() = 0;
+      virtual std::shared_ptr<Promise<StartMonitoringGeofencesResult>> startMonitoringGeofences(const std::vector<GeofenceRegion>& regions) = 0;
+      virtual void stopMonitoringGeofences() = 0;
+      virtual std::variant<nitro::NullType, GeofenceTransitionEvent> getPendingGeofenceTransition() = 0;
 
     protected:
       // Hybrid Setup

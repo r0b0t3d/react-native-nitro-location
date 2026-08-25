@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "AndroidDesiredAccuracy" and the the Kotlin enum "AndroidDesiredAccuracy".
+   * The C++ JNI bridge between the C++ enum "AndroidDesiredAccuracy" and the Kotlin enum "AndroidDesiredAccuracy".
    */
   struct JAndroidDesiredAccuracy final: public jni::JavaClass<JAndroidDesiredAccuracy> {
   public:

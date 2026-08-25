@@ -80,6 +80,24 @@ export interface GetLatestLocationOptions {
   maximumAge?: number;
 }
 
+export interface StartMonitoringGeofencesResult {
+  monitoredCount: number;
+}
+
+export interface GeofenceRegion {
+  identifier: string;
+  latitude: number;
+  longitude: number;
+  radiusMeters: number;
+}
+
+export type GeofenceTransitionType = 'enter' | 'exit';
+
+export interface GeofenceTransitionEvent {
+  identifier: string;
+  type: GeofenceTransitionType;
+}
+
 export interface NitroLocation extends HybridObject<{
   ios: 'swift';
   android: 'kotlin';
@@ -109,4 +127,12 @@ export interface NitroLocation extends HybridObject<{
   stopHeadingUpdates(): void;
   startSignificantLocationUpdates(): void;
   stopSignificantLocationUpdates(): void;
+
+  // Geofencing
+  onGeofenceTransition: ((event: GeofenceTransitionEvent) => void) | null;
+  startMonitoringGeofences(
+    regions: GeofenceRegion[]
+  ): Promise<StartMonitoringGeofencesResult>;
+  stopMonitoringGeofences(): void;
+  getPendingGeofenceTransition(): GeofenceTransitionEvent | null;
 }

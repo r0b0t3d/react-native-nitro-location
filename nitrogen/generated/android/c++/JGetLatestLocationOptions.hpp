@@ -17,7 +17,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "GetLatestLocationOptions" and the the Kotlin data class "GetLatestLocationOptions".
+   * The C++ JNI bridge between the C++ struct "GetLatestLocationOptions" and the Kotlin data class "GetLatestLocationOptions".
    */
   struct JGetLatestLocationOptions final: public jni::JavaClass<JGetLatestLocationOptions> {
   public:

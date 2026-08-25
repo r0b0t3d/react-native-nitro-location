@@ -1,7 +1,9 @@
 package com.margelo.nitro.nitrolocation
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -21,6 +23,9 @@ import com.facebook.react.modules.core.PermissionListener
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -45,6 +50,8 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
         Variant_NullType__status__LocationPermissionStatus_____Unit.First(NullType.NULL)
     override var onSignificantLocationUpdate: Variant_NullType__locations__Array_Location______Unit =
         Variant_NullType__locations__Array_Location______Unit.First(NullType.NULL)
+    override var onGeofenceTransition: Variant_NullType__event__GeofenceTransitionEvent_____Unit =
+        Variant_NullType__event__GeofenceTransitionEvent_____Unit.First(NullType.NULL)
 
     private val context: ReactApplicationContext
         get() = NitroModules.applicationContext ?: throw Error("No context - NitroModules.applicationContext was null!")
@@ -54,6 +61,17 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
 
     private val locationManager: LocationManager
         get() = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+    private val geofencingClient: GeofencingClient
+        get() = LocationServices.getGeofencingClient(context)
+
+    private val geofencePendingIntent: PendingIntent
+        get() = PendingIntent.getBroadcast(
+            context,
+            GEOFENCE_REQUEST_CODE,
+            Intent(context, NitroLocationGeofenceReceiver::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+        )
 
     private val sensorManager: SensorManager
         get() = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -236,6 +254,69 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
         }
         significantLocationCallback = null
         try { locationManager.removeUpdates(legacySignificantLocationListener) } catch (_: Exception) {}
+    }
+
+    // MARK: - Geofencing
+    override fun startMonitoringGeofences(regions: Array<GeofenceRegion>): Promise<StartMonitoringGeofencesResult> {
+        val promise = Promise<StartMonitoringGeofencesResult>()
+
+        val geofenceList = regions.map { region ->
+            Geofence.Builder()
+                .setRequestId(region.identifier)
+                .setCircularRegion(region.latitude, region.longitude, region.radiusMeters.toFloat())
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build()
+        }
+
+        try {
+            // Full replace: remove any previously monitored regions before adding the new set.
+            val removeTask = geofencingClient.removeGeofences(geofencePendingIntent)
+
+            if (geofenceList.isEmpty()) {
+                // GeofencingRequest.Builder().build() throws IllegalArgumentException when no
+                // geofence was added. An empty regions array is itself a valid "unregister
+                // everything" request under full-replace semantics, so resolve immediately
+                // without ever constructing the request.
+                promise.resolve(StartMonitoringGeofencesResult(0.0))
+                return promise
+            }
+
+            val request = GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofences(geofenceList)
+                .build()
+
+            // removeGeofences and addGeofences are independent async Play Services Tasks with
+            // no ordering guarantee between them. Chain addGeofences via continueWithTask so it
+            // only runs once removeGeofences has settled (success OR failure — a "nothing to
+            // remove" failure here is not fatal), instead of firing both unawaited.
+            removeTask.continueWithTask {
+                @Suppress("MissingPermission")
+                geofencingClient.addGeofences(request, geofencePendingIntent)
+            }
+                .addOnSuccessListener {
+                    promise.resolve(StartMonitoringGeofencesResult(regions.size.toDouble()))
+                }
+                .addOnFailureListener { error ->
+                    promise.reject(error)
+                }
+        } catch (e: SecurityException) {
+            promise.reject(e)
+        }
+
+        return promise
+    }
+
+    override fun stopMonitoringGeofences() {
+        geofencingClient.removeGeofences(geofencePendingIntent)
+    }
+
+    override fun getPendingGeofenceTransition(): Variant_NullType_GeofenceTransitionEvent {
+        // Android has no relaunch-race buffering need (spec is iOS-only): the manifest
+        // BroadcastReceiver (NitroLocationGeofenceReceiver) covers reboot/process-death instead.
+        // Permanent no-op.
+        return Variant_NullType_GeofenceTransitionEvent.First(NullType.NULL)
     }
 
     // MARK: - One-shot
@@ -451,6 +532,7 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
 
     companion object {
         private const val LOCATION_PERMISSION_CODE = 9372
+        private const val GEOFENCE_REQUEST_CODE = 9373
     }
 
     private fun hasLocationPermission(): Boolean {

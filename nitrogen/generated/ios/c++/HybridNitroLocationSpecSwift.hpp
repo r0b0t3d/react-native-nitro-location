@@ -18,6 +18,10 @@ namespace margelo::nitro::nitrolocation { struct Location; }
 namespace margelo::nitro::nitrolocation { struct Heading; }
 // Forward declaration of `LocationPermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { enum class LocationPermissionStatus; }
+// Forward declaration of `GeofenceTransitionEvent` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceTransitionEvent; }
+// Forward declaration of `GeofenceTransitionType` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { enum class GeofenceTransitionType; }
 // Forward declaration of `ConfigureOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct ConfigureOptions; }
 // Forward declaration of `ActivityType` to properly resolve imports.
@@ -38,15 +42,22 @@ namespace margelo::nitro::nitrolocation { enum class IosPermissionType; }
 namespace margelo::nitro::nitrolocation { enum class AndroidPermissionDetail; }
 // Forward declaration of `GetLatestLocationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct GetLatestLocationOptions; }
+// Forward declaration of `StartMonitoringGeofencesResult` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct StartMonitoringGeofencesResult; }
+// Forward declaration of `GeofenceRegion` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceRegion; }
 
-#include <NitroModules/Null.hpp>
 #include "Location.hpp"
 #include <vector>
 #include <functional>
+#include <NitroModules/Null.hpp>
 #include <variant>
 #include <optional>
 #include "Heading.hpp"
 #include "LocationPermissionStatus.hpp"
+#include "GeofenceTransitionEvent.hpp"
+#include <string>
+#include "GeofenceTransitionType.hpp"
 #include <NitroModules/Promise.hpp>
 #include "ConfigureOptions.hpp"
 #include "ActivityType.hpp"
@@ -58,6 +69,8 @@ namespace margelo::nitro::nitrolocation { struct GetLatestLocationOptions; }
 #include "IosPermissionType.hpp"
 #include "AndroidPermissionDetail.hpp"
 #include "GetLatestLocationOptions.hpp"
+#include "StartMonitoringGeofencesResult.hpp"
+#include "GeofenceRegion.hpp"
 
 #include "NitroLocation-Swift-Cxx-Umbrella.hpp"
 
@@ -105,33 +118,40 @@ namespace margelo::nitro::nitrolocation {
 
   public:
     // Properties
-    inline std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> getOnLocationUpdate() noexcept override {
+    inline std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> getOnLocationUpdate() noexcept override {
       auto __result = _swiftPart.getOnLocationUpdate();
       return __result;
     }
-    inline void setOnLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onLocationUpdate) noexcept override {
+    inline void setOnLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onLocationUpdate) noexcept override {
       _swiftPart.setOnLocationUpdate(onLocationUpdate);
     }
-    inline std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>> getOnHeadingUpdate() noexcept override {
+    inline std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType> getOnHeadingUpdate() noexcept override {
       auto __result = _swiftPart.getOnHeadingUpdate();
       return __result;
     }
-    inline void setOnHeadingUpdate(const std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>>& onHeadingUpdate) noexcept override {
+    inline void setOnHeadingUpdate(const std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType>& onHeadingUpdate) noexcept override {
       _swiftPart.setOnHeadingUpdate(onHeadingUpdate);
     }
-    inline std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>> getOnPermissionUpdate() noexcept override {
+    inline std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType> getOnPermissionUpdate() noexcept override {
       auto __result = _swiftPart.getOnPermissionUpdate();
       return __result;
     }
-    inline void setOnPermissionUpdate(const std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>>& onPermissionUpdate) noexcept override {
+    inline void setOnPermissionUpdate(const std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType>& onPermissionUpdate) noexcept override {
       _swiftPart.setOnPermissionUpdate(onPermissionUpdate);
     }
-    inline std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> getOnSignificantLocationUpdate() noexcept override {
+    inline std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> getOnSignificantLocationUpdate() noexcept override {
       auto __result = _swiftPart.getOnSignificantLocationUpdate();
       return __result;
     }
-    inline void setOnSignificantLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onSignificantLocationUpdate) noexcept override {
+    inline void setOnSignificantLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onSignificantLocationUpdate) noexcept override {
       _swiftPart.setOnSignificantLocationUpdate(onSignificantLocationUpdate);
+    }
+    inline std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType> getOnGeofenceTransition() noexcept override {
+      auto __result = _swiftPart.getOnGeofenceTransition();
+      return __result;
+    }
+    inline void setOnGeofenceTransition(const std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType>& onGeofenceTransition) noexcept override {
+      _swiftPart.setOnGeofenceTransition(onGeofenceTransition);
     }
 
   public:
@@ -203,6 +223,28 @@ namespace margelo::nitro::nitrolocation {
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+    }
+    inline std::shared_ptr<Promise<StartMonitoringGeofencesResult>> startMonitoringGeofences(const std::vector<GeofenceRegion>& regions) override {
+      auto __result = _swiftPart.startMonitoringGeofences(regions);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void stopMonitoringGeofences() override {
+      auto __result = _swiftPart.stopMonitoringGeofences();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline std::variant<nitro::NullType, GeofenceTransitionEvent> getPendingGeofenceTransition() override {
+      auto __result = _swiftPart.getPendingGeofenceTransition();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
     }
 
   private:

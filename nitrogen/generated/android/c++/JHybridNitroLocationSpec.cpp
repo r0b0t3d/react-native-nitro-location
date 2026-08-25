@@ -13,6 +13,12 @@ namespace margelo::nitro::nitrolocation { struct Location; }
 namespace margelo::nitro::nitrolocation { struct Heading; }
 // Forward declaration of `LocationPermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { enum class LocationPermissionStatus; }
+// Forward declaration of `GeofenceTransitionEvent` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceTransitionEvent; }
+// Forward declaration of `GeofenceTransitionType` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { enum class GeofenceTransitionType; }
+// Forward declaration of `StartMonitoringGeofencesResult` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct StartMonitoringGeofencesResult; }
 // Forward declaration of `ConfigureOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct ConfigureOptions; }
 // Forward declaration of `ActivityType` to properly resolve imports.
@@ -33,30 +39,42 @@ namespace margelo::nitro::nitrolocation { enum class IosPermissionType; }
 namespace margelo::nitro::nitrolocation { enum class AndroidPermissionDetail; }
 // Forward declaration of `GetLatestLocationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct GetLatestLocationOptions; }
+// Forward declaration of `GeofenceRegion` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceRegion; }
 
-#include <NitroModules/Null.hpp>
 #include "Location.hpp"
 #include <vector>
 #include <functional>
+#include <NitroModules/Null.hpp>
 #include <variant>
-#include "JVariant_NullType__locations__Array_Location______Unit.hpp"
-#include <NitroModules/JNull.hpp>
+#include "JVariant__locations__Array_Location______Unit_NullType.hpp"
 #include "JFunc_void_std__vector_Location_.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include "JLocation.hpp"
 #include <optional>
+#include <NitroModules/JNull.hpp>
 #include "Heading.hpp"
-#include "JVariant_NullType__heading__Heading_____Unit.hpp"
+#include "JVariant__heading__Heading_____Unit_NullType.hpp"
 #include "JFunc_void_Heading.hpp"
 #include "JHeading.hpp"
 #include "LocationPermissionStatus.hpp"
-#include "JVariant_NullType__status__LocationPermissionStatus_____Unit.hpp"
+#include "JVariant__status__LocationPermissionStatus_____Unit_NullType.hpp"
 #include "JFunc_void_LocationPermissionStatus.hpp"
 #include "JLocationPermissionStatus.hpp"
+#include "GeofenceTransitionEvent.hpp"
+#include "JVariant__event__GeofenceTransitionEvent_____Unit_NullType.hpp"
+#include "JFunc_void_GeofenceTransitionEvent.hpp"
+#include "JGeofenceTransitionEvent.hpp"
+#include <string>
+#include "GeofenceTransitionType.hpp"
+#include "JGeofenceTransitionType.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include <NitroModules/JUnit.hpp>
 #include "JVariant_NullType_Location.hpp"
+#include "StartMonitoringGeofencesResult.hpp"
+#include "JStartMonitoringGeofencesResult.hpp"
+#include "JVariant_NullType_GeofenceTransitionEvent.hpp"
 #include "ConfigureOptions.hpp"
 #include "JConfigureOptions.hpp"
 #include "ActivityType.hpp"
@@ -77,6 +95,8 @@ namespace margelo::nitro::nitrolocation { struct GetLatestLocationOptions; }
 #include "JAndroidPermissionDetail.hpp"
 #include "GetLatestLocationOptions.hpp"
 #include "JGetLatestLocationOptions.hpp"
+#include "GeofenceRegion.hpp"
+#include "JGeofenceRegion.hpp"
 
 namespace margelo::nitro::nitrolocation {
 
@@ -108,41 +128,50 @@ namespace margelo::nitro::nitrolocation {
   }
 
   // Properties
-  std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> JHybridNitroLocationSpec::getOnLocationUpdate() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_NullType__locations__Array_Location______Unit>()>("getOnLocationUpdate");
+  std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> JHybridNitroLocationSpec::getOnLocationUpdate() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant__locations__Array_Location______Unit_NullType>()>("getOnLocationUpdate");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
-  void JHybridNitroLocationSpec::setOnLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onLocationUpdate) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_NullType__locations__Array_Location______Unit> /* onLocationUpdate */)>("setOnLocationUpdate");
-    method(_javaPart, JVariant_NullType__locations__Array_Location______Unit::fromCpp(onLocationUpdate));
+  void JHybridNitroLocationSpec::setOnLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onLocationUpdate) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant__locations__Array_Location______Unit_NullType> /* onLocationUpdate */)>("setOnLocationUpdate");
+    method(_javaPart, JVariant__locations__Array_Location______Unit_NullType::fromCpp(onLocationUpdate));
   }
-  std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>> JHybridNitroLocationSpec::getOnHeadingUpdate() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_NullType__heading__Heading_____Unit>()>("getOnHeadingUpdate");
+  std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType> JHybridNitroLocationSpec::getOnHeadingUpdate() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant__heading__Heading_____Unit_NullType>()>("getOnHeadingUpdate");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
-  void JHybridNitroLocationSpec::setOnHeadingUpdate(const std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>>& onHeadingUpdate) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_NullType__heading__Heading_____Unit> /* onHeadingUpdate */)>("setOnHeadingUpdate");
-    method(_javaPart, JVariant_NullType__heading__Heading_____Unit::fromCpp(onHeadingUpdate));
+  void JHybridNitroLocationSpec::setOnHeadingUpdate(const std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType>& onHeadingUpdate) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant__heading__Heading_____Unit_NullType> /* onHeadingUpdate */)>("setOnHeadingUpdate");
+    method(_javaPart, JVariant__heading__Heading_____Unit_NullType::fromCpp(onHeadingUpdate));
   }
-  std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>> JHybridNitroLocationSpec::getOnPermissionUpdate() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_NullType__status__LocationPermissionStatus_____Unit>()>("getOnPermissionUpdate");
+  std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType> JHybridNitroLocationSpec::getOnPermissionUpdate() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant__status__LocationPermissionStatus_____Unit_NullType>()>("getOnPermissionUpdate");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
-  void JHybridNitroLocationSpec::setOnPermissionUpdate(const std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>>& onPermissionUpdate) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_NullType__status__LocationPermissionStatus_____Unit> /* onPermissionUpdate */)>("setOnPermissionUpdate");
-    method(_javaPart, JVariant_NullType__status__LocationPermissionStatus_____Unit::fromCpp(onPermissionUpdate));
+  void JHybridNitroLocationSpec::setOnPermissionUpdate(const std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType>& onPermissionUpdate) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant__status__LocationPermissionStatus_____Unit_NullType> /* onPermissionUpdate */)>("setOnPermissionUpdate");
+    method(_javaPart, JVariant__status__LocationPermissionStatus_____Unit_NullType::fromCpp(onPermissionUpdate));
   }
-  std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> JHybridNitroLocationSpec::getOnSignificantLocationUpdate() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_NullType__locations__Array_Location______Unit>()>("getOnSignificantLocationUpdate");
+  std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> JHybridNitroLocationSpec::getOnSignificantLocationUpdate() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant__locations__Array_Location______Unit_NullType>()>("getOnSignificantLocationUpdate");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
-  void JHybridNitroLocationSpec::setOnSignificantLocationUpdate(const std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>& onSignificantLocationUpdate) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_NullType__locations__Array_Location______Unit> /* onSignificantLocationUpdate */)>("setOnSignificantLocationUpdate");
-    method(_javaPart, JVariant_NullType__locations__Array_Location______Unit::fromCpp(onSignificantLocationUpdate));
+  void JHybridNitroLocationSpec::setOnSignificantLocationUpdate(const std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>& onSignificantLocationUpdate) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant__locations__Array_Location______Unit_NullType> /* onSignificantLocationUpdate */)>("setOnSignificantLocationUpdate");
+    method(_javaPart, JVariant__locations__Array_Location______Unit_NullType::fromCpp(onSignificantLocationUpdate));
+  }
+  std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType> JHybridNitroLocationSpec::getOnGeofenceTransition() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant__event__GeofenceTransitionEvent_____Unit_NullType>()>("getOnGeofenceTransition");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
+  }
+  void JHybridNitroLocationSpec::setOnGeofenceTransition(const std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType>& onGeofenceTransition) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant__event__GeofenceTransitionEvent_____Unit_NullType> /* onGeofenceTransition */)>("setOnGeofenceTransition");
+    method(_javaPart, JVariant__event__GeofenceTransitionEvent_____Unit_NullType::fromCpp(onGeofenceTransition));
   }
 
   // Methods
@@ -232,6 +261,40 @@ namespace margelo::nitro::nitrolocation {
   void JHybridNitroLocationSpec::stopSignificantLocationUpdates() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("stopSignificantLocationUpdates");
     method(_javaPart);
+  }
+  std::shared_ptr<Promise<StartMonitoringGeofencesResult>> JHybridNitroLocationSpec::startMonitoringGeofences(const std::vector<GeofenceRegion>& regions) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JGeofenceRegion>> /* regions */)>("startMonitoringGeofences");
+    auto __result = method(_javaPart, [&](auto&& __input) {
+      size_t __size = __input.size();
+      jni::local_ref<jni::JArrayClass<JGeofenceRegion>> __array = jni::JArrayClass<JGeofenceRegion>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = __input[__i];
+        auto __elementJni = JGeofenceRegion::fromCpp(__element);
+        __array->setElement(__i, *__elementJni);
+      }
+      return __array;
+    }(regions));
+    return [&]() {
+      auto __promise = Promise<StartMonitoringGeofencesResult>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JStartMonitoringGeofencesResult>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  void JHybridNitroLocationSpec::stopMonitoringGeofences() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("stopMonitoringGeofences");
+    method(_javaPart);
+  }
+  std::variant<nitro::NullType, GeofenceTransitionEvent> JHybridNitroLocationSpec::getPendingGeofenceTransition() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_NullType_GeofenceTransitionEvent>()>("getPendingGeofenceTransition");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
   }
 
 } // namespace margelo::nitro::nitrolocation

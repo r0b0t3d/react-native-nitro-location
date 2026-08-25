@@ -21,7 +21,7 @@ namespace margelo::nitro::nitrolocation {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "RequestPermissionOptions" and the the Kotlin data class "RequestPermissionOptions".
+   * The C++ JNI bridge between the C++ struct "RequestPermissionOptions" and the Kotlin data class "RequestPermissionOptions".
    */
   struct JRequestPermissionOptions final: public jni::JavaClass<JRequestPermissionOptions> {
   public:

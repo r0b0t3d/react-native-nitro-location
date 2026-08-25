@@ -22,6 +22,8 @@ namespace margelo::nitro::nitrolocation {
       prototype.registerHybridSetter("onPermissionUpdate", &HybridNitroLocationSpec::setOnPermissionUpdate);
       prototype.registerHybridGetter("onSignificantLocationUpdate", &HybridNitroLocationSpec::getOnSignificantLocationUpdate);
       prototype.registerHybridSetter("onSignificantLocationUpdate", &HybridNitroLocationSpec::setOnSignificantLocationUpdate);
+      prototype.registerHybridGetter("onGeofenceTransition", &HybridNitroLocationSpec::getOnGeofenceTransition);
+      prototype.registerHybridSetter("onGeofenceTransition", &HybridNitroLocationSpec::setOnGeofenceTransition);
       prototype.registerHybridMethod("configure", &HybridNitroLocationSpec::configure);
       prototype.registerHybridMethod("requestPermission", &HybridNitroLocationSpec::requestPermission);
       prototype.registerHybridMethod("getCurrentPermission", &HybridNitroLocationSpec::getCurrentPermission);
@@ -32,6 +34,9 @@ namespace margelo::nitro::nitrolocation {
       prototype.registerHybridMethod("stopHeadingUpdates", &HybridNitroLocationSpec::stopHeadingUpdates);
       prototype.registerHybridMethod("startSignificantLocationUpdates", &HybridNitroLocationSpec::startSignificantLocationUpdates);
       prototype.registerHybridMethod("stopSignificantLocationUpdates", &HybridNitroLocationSpec::stopSignificantLocationUpdates);
+      prototype.registerHybridMethod("startMonitoringGeofences", &HybridNitroLocationSpec::startMonitoringGeofences);
+      prototype.registerHybridMethod("stopMonitoringGeofences", &HybridNitroLocationSpec::stopMonitoringGeofences);
+      prototype.registerHybridMethod("getPendingGeofenceTransition", &HybridNitroLocationSpec::getPendingGeofenceTransition);
     });
   }
 

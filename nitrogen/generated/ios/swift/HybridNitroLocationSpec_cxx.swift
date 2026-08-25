@@ -121,32 +121,29 @@ open class HybridNitroLocationSpec_cxx {
   }
 
   // Properties
-  public final var onLocationUpdate: bridge.std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ {
+  public final var onLocationUpdate: bridge.std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ {
     @inline(__always)
     get {
-      return { () -> bridge.std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ in
+      return { () -> bridge.std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ in
         switch self.__implementation.onLocationUpdate {
           case .first(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(margelo.nitro.NullType.null)
-          case .second(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______({ () -> bridge.Func_void_std__vector_Location_ in
+            return bridge.create_std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_({ () -> bridge.Func_void_std__vector_Location_ in
               let __closureWrapper = Func_void_std__vector_Location_(__value)
               return bridge.create_Func_void_std__vector_Location_(__closureWrapper.toUnsafe())
             }())
+          case .second(let __value):
+            return bridge.create_std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(margelo.nitro.NullType.null)
         }
       }()
     }
     @inline(__always)
     set {
-      self.__implementation.onLocationUpdate = { () -> Variant_NullType____locations___Location______Void in
+      self.__implementation.onLocationUpdate = { () -> Variant____locations___Location______Void_NullType in
         let __variant = newValue
         switch __variant.index() {
           case 0:
             let __actual = __variant.get_0()
-            return .first(NullType.null)
-          case 1:
-            let __actual = __variant.get_1()
-            return .second({ () -> ([Location]) -> Void in
+            return .first({ () -> ([Location]) -> Void in
               let __wrappedFunction = bridge.wrap_Func_void_std__vector_Location_(__actual)
               return { (__locations: [Location]) -> Void in
                 __wrappedFunction.call({ () -> bridge.std__vector_Location_ in
@@ -158,6 +155,9 @@ open class HybridNitroLocationSpec_cxx {
                 }())
               }
             }())
+          case 1:
+            let __actual = __variant.get_1()
+            return .second(NullType.null)
           default:
             fatalError("Variant can never have index \(__variant.index())!")
         }
@@ -165,37 +165,37 @@ open class HybridNitroLocationSpec_cxx {
     }
   }
   
-  public final var onHeadingUpdate: bridge.std__variant_nitro__NullType__std__function_void_const_Heading_____heading______ {
+  public final var onHeadingUpdate: bridge.std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_ {
     @inline(__always)
     get {
-      return { () -> bridge.std__variant_nitro__NullType__std__function_void_const_Heading_____heading______ in
+      return { () -> bridge.std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_ in
         switch self.__implementation.onHeadingUpdate {
           case .first(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_const_Heading_____heading______(margelo.nitro.NullType.null)
-          case .second(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_const_Heading_____heading______({ () -> bridge.Func_void_Heading in
+            return bridge.create_std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_({ () -> bridge.Func_void_Heading in
               let __closureWrapper = Func_void_Heading(__value)
               return bridge.create_Func_void_Heading(__closureWrapper.toUnsafe())
             }())
+          case .second(let __value):
+            return bridge.create_std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_(margelo.nitro.NullType.null)
         }
       }()
     }
     @inline(__always)
     set {
-      self.__implementation.onHeadingUpdate = { () -> Variant_NullType____heading__Heading_____Void in
+      self.__implementation.onHeadingUpdate = { () -> Variant____heading__Heading_____Void_NullType in
         let __variant = newValue
         switch __variant.index() {
           case 0:
             let __actual = __variant.get_0()
-            return .first(NullType.null)
-          case 1:
-            let __actual = __variant.get_1()
-            return .second({ () -> (Heading) -> Void in
+            return .first({ () -> (Heading) -> Void in
               let __wrappedFunction = bridge.wrap_Func_void_Heading(__actual)
               return { (__heading: Heading) -> Void in
                 __wrappedFunction.call(__heading)
               }
             }())
+          case 1:
+            let __actual = __variant.get_1()
+            return .second(NullType.null)
           default:
             fatalError("Variant can never have index \(__variant.index())!")
         }
@@ -203,37 +203,37 @@ open class HybridNitroLocationSpec_cxx {
     }
   }
   
-  public final var onPermissionUpdate: bridge.std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______ {
+  public final var onPermissionUpdate: bridge.std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_ {
     @inline(__always)
     get {
-      return { () -> bridge.std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______ in
+      return { () -> bridge.std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_ in
         switch self.__implementation.onPermissionUpdate {
           case .first(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______(margelo.nitro.NullType.null)
-          case .second(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______({ () -> bridge.Func_void_LocationPermissionStatus in
+            return bridge.create_std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_({ () -> bridge.Func_void_LocationPermissionStatus in
               let __closureWrapper = Func_void_LocationPermissionStatus(__value)
               return bridge.create_Func_void_LocationPermissionStatus(__closureWrapper.toUnsafe())
             }())
+          case .second(let __value):
+            return bridge.create_std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_(margelo.nitro.NullType.null)
         }
       }()
     }
     @inline(__always)
     set {
-      self.__implementation.onPermissionUpdate = { () -> Variant_NullType____status__LocationPermissionStatus_____Void in
+      self.__implementation.onPermissionUpdate = { () -> Variant____status__LocationPermissionStatus_____Void_NullType in
         let __variant = newValue
         switch __variant.index() {
           case 0:
             let __actual = __variant.get_0()
-            return .first(NullType.null)
-          case 1:
-            let __actual = __variant.get_1()
-            return .second({ () -> (LocationPermissionStatus) -> Void in
+            return .first({ () -> (LocationPermissionStatus) -> Void in
               let __wrappedFunction = bridge.wrap_Func_void_LocationPermissionStatus(__actual)
               return { (__status: LocationPermissionStatus) -> Void in
                 __wrappedFunction.call(__status.rawValue)
               }
             }())
+          case 1:
+            let __actual = __variant.get_1()
+            return .second(NullType.null)
           default:
             fatalError("Variant can never have index \(__variant.index())!")
         }
@@ -241,32 +241,29 @@ open class HybridNitroLocationSpec_cxx {
     }
   }
   
-  public final var onSignificantLocationUpdate: bridge.std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ {
+  public final var onSignificantLocationUpdate: bridge.std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ {
     @inline(__always)
     get {
-      return { () -> bridge.std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ in
+      return { () -> bridge.std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ in
         switch self.__implementation.onSignificantLocationUpdate {
           case .first(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(margelo.nitro.NullType.null)
-          case .second(let __value):
-            return bridge.create_std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______({ () -> bridge.Func_void_std__vector_Location_ in
+            return bridge.create_std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_({ () -> bridge.Func_void_std__vector_Location_ in
               let __closureWrapper = Func_void_std__vector_Location_(__value)
               return bridge.create_Func_void_std__vector_Location_(__closureWrapper.toUnsafe())
             }())
+          case .second(let __value):
+            return bridge.create_std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(margelo.nitro.NullType.null)
         }
       }()
     }
     @inline(__always)
     set {
-      self.__implementation.onSignificantLocationUpdate = { () -> Variant_NullType____locations___Location______Void in
+      self.__implementation.onSignificantLocationUpdate = { () -> Variant____locations___Location______Void_NullType in
         let __variant = newValue
         switch __variant.index() {
           case 0:
             let __actual = __variant.get_0()
-            return .first(NullType.null)
-          case 1:
-            let __actual = __variant.get_1()
-            return .second({ () -> ([Location]) -> Void in
+            return .first({ () -> ([Location]) -> Void in
               let __wrappedFunction = bridge.wrap_Func_void_std__vector_Location_(__actual)
               return { (__locations: [Location]) -> Void in
                 __wrappedFunction.call({ () -> bridge.std__vector_Location_ in
@@ -278,6 +275,47 @@ open class HybridNitroLocationSpec_cxx {
                 }())
               }
             }())
+          case 1:
+            let __actual = __variant.get_1()
+            return .second(NullType.null)
+          default:
+            fatalError("Variant can never have index \(__variant.index())!")
+        }
+      }()
+    }
+  }
+  
+  public final var onGeofenceTransition: bridge.std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_ in
+        switch self.__implementation.onGeofenceTransition {
+          case .first(let __value):
+            return bridge.create_std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_({ () -> bridge.Func_void_GeofenceTransitionEvent in
+              let __closureWrapper = Func_void_GeofenceTransitionEvent(__value)
+              return bridge.create_Func_void_GeofenceTransitionEvent(__closureWrapper.toUnsafe())
+            }())
+          case .second(let __value):
+            return bridge.create_std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_(margelo.nitro.NullType.null)
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onGeofenceTransition = { () -> Variant____event__GeofenceTransitionEvent_____Void_NullType in
+        let __variant = newValue
+        switch __variant.index() {
+          case 0:
+            let __actual = __variant.get_0()
+            return .first({ () -> (GeofenceTransitionEvent) -> Void in
+              let __wrappedFunction = bridge.wrap_Func_void_GeofenceTransitionEvent(__actual)
+              return { (__event: GeofenceTransitionEvent) -> Void in
+                __wrappedFunction.call(__event)
+              }
+            }())
+          case 1:
+            let __actual = __variant.get_1()
+            return .second(NullType.null)
           default:
             fatalError("Variant can never have index \(__variant.index())!")
         }
@@ -432,6 +470,55 @@ open class HybridNitroLocationSpec_cxx {
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
       return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func startMonitoringGeofences(regions: bridge.std__vector_GeofenceRegion_) -> bridge.Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___ {
+    do {
+      let __result = try self.__implementation.startMonitoringGeofences(regions: regions.map({ __item in __item }))
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_StartMonitoringGeofencesResult__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_StartMonitoringGeofencesResult__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_StartMonitoringGeofencesResult__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func stopMonitoringGeofences() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.stopMonitoringGeofences()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getPendingGeofenceTransition() -> bridge.Result_std__variant_nitro__NullType__GeofenceTransitionEvent__ {
+    do {
+      let __result = try self.__implementation.getPendingGeofenceTransition()
+      let __resultCpp = { () -> bridge.std__variant_nitro__NullType__GeofenceTransitionEvent_ in
+        switch __result {
+          case .first(let __value):
+            return bridge.create_std__variant_nitro__NullType__GeofenceTransitionEvent_(margelo.nitro.NullType.null)
+          case .second(let __value):
+            return bridge.create_std__variant_nitro__NullType__GeofenceTransitionEvent_(__value)
+        }
+      }().variant
+      return bridge.create_Result_std__variant_nitro__NullType__GeofenceTransitionEvent__(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__variant_nitro__NullType__GeofenceTransitionEvent__(__exceptionPtr)
     }
   }
 }

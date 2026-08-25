@@ -41,6 +41,20 @@ private final class LocationDelegate: NSObject, CLLocationManagerDelegate {
   ) {
     owner?.handleLocationError(error)
   }
+
+  func locationManager(
+    _ manager: CLLocationManager,
+    didEnterRegion region: CLRegion
+  ) {
+    owner?.handleGeofenceTransition(region, type: .enter)
+  }
+
+  func locationManager(
+    _ manager: CLLocationManager,
+    didExitRegion region: CLRegion
+  ) {
+    owner?.handleGeofenceTransition(region, type: .exit)
+  }
 }
 
 final class NitroLocation: HybridNitroLocationSpec {
@@ -90,6 +104,14 @@ final class NitroLocation: HybridNitroLocationSpec {
   var onHeadingUpdate: Variant_NullType____heading__Heading_____Void = .first(.null)
   var onPermissionUpdate: Variant_NullType____status__LocationPermissionStatus_____Void = .first(.null)
   var onSignificantLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
+  var onGeofenceTransition: Variant_NullType____event__GeofenceTransitionEvent_____Void = .first(.null) {
+    didSet {
+      guard case .second(let callback) = onGeofenceTransition, !pendingGeofenceTransitions.isEmpty else { return }
+      let buffered = pendingGeofenceTransitions
+      pendingGeofenceTransitions.removeAll()
+      buffered.forEach(callback)
+    }
+  }
 
   // MARK: - Init
 
@@ -136,6 +158,10 @@ final class NitroLocation: HybridNitroLocationSpec {
           if let indicator = options.showsBackgroundLocationIndicator { manager.showsBackgroundLocationIndicator = indicator }
           if let activityType = options.activityType { manager.activityType = Self.mapActivityType(activityType) }
           if let accuracy = options.desiredAccuracy?.ios { manager.desiredAccuracy = Self.mapIosAccuracy(accuracy) }
+          // CoreLocation defaults this to true, which auto-pauses delivery when the device
+          // looks stationary (e.g. locked, sitting on a desk) — exactly the case we need
+          // updates during. Not exposed in ConfigureOptions.
+          manager.pausesLocationUpdatesAutomatically = false
         }
       }
     }
@@ -286,6 +312,68 @@ final class NitroLocation: HybridNitroLocationSpec {
     }
   }
 
+  // MARK: - Geofencing
+
+  private var pendingGeofenceTransitions: [GeofenceTransitionEvent] = []
+
+  func startMonitoringGeofences(regions: [GeofenceRegion]) throws -> Promise<StartMonitoringGeofencesResult> {
+    return Promise.async {
+      return await withCheckedContinuation { continuation in
+        DispatchQueue.main.async {
+          let authStatus = self.locationManager.authorizationStatus
+          let accuracyAuthorization = CLLocationManager().accuracyAuthorization
+          guard authStatus == .authorizedAlways, accuracyAuthorization == .fullAccuracy else {
+            continuation.resume(returning: StartMonitoringGeofencesResult(monitoredCount: 0))
+            return
+          }
+
+          for region in self.locationManager.monitoredRegions {
+            self.locationManager.stopMonitoring(for: region)
+          }
+
+          for region in regions {
+            let circularRegion = CLCircularRegion(
+              center: CLLocationCoordinate2D(latitude: region.latitude, longitude: region.longitude),
+              radius: region.radiusMeters,
+              identifier: region.identifier
+            )
+            circularRegion.notifyOnEntry = true
+            circularRegion.notifyOnExit = true
+            self.locationManager.startMonitoring(for: circularRegion)
+          }
+
+          continuation.resume(
+            returning: StartMonitoringGeofencesResult(
+              monitoredCount: Double(self.locationManager.monitoredRegions.count)
+            )
+          )
+        }
+      }
+    }
+  }
+
+  func stopMonitoringGeofences() throws {
+    DispatchQueue.main.async {
+      for region in self.locationManager.monitoredRegions {
+        self.locationManager.stopMonitoring(for: region)
+      }
+    }
+  }
+
+  func getPendingGeofenceTransition() throws -> Variant_NullType_GeofenceTransitionEvent {
+    guard !pendingGeofenceTransitions.isEmpty else {
+      return .first(.null)
+    }
+    return .second(pendingGeofenceTransitions.removeFirst())
+  }
+
+  private func bufferGeofenceTransition(_ event: GeofenceTransitionEvent) {
+    pendingGeofenceTransitions.append(event)
+    if pendingGeofenceTransitions.count > 5 {
+      pendingGeofenceTransitions.removeFirst()
+    }
+  }
+
   // MARK: - Delegate Handlers
   // Called on main thread by CLLocationManager.
 
@@ -361,6 +449,15 @@ final class NitroLocation: HybridNitroLocationSpec {
     locationTimeoutTask = nil
     stopOneShotUpdatesIfNeeded()
     continuation.resume(returning: .first(.null))
+  }
+
+  fileprivate func handleGeofenceTransition(_ region: CLRegion, type: GeofenceTransitionType) {
+    let event = GeofenceTransitionEvent(identifier: region.identifier, type: type)
+    if case .second(let callback) = onGeofenceTransition {
+      callback(event)
+    } else {
+      bufferGeofenceTransition(event)
+    }
   }
 
   // MARK: - Helpers

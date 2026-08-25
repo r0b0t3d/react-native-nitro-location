@@ -18,6 +18,12 @@ namespace margelo::nitro::nitrolocation { enum class AndroidPermissionDetail; }
 namespace margelo::nitro::nitrolocation { enum class AndroidProvider; }
 // Forward declaration of `DesiredAccuracy` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct DesiredAccuracy; }
+// Forward declaration of `GeofenceRegion` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceRegion; }
+// Forward declaration of `GeofenceTransitionEvent` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct GeofenceTransitionEvent; }
+// Forward declaration of `GeofenceTransitionType` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { enum class GeofenceTransitionType; }
 // Forward declaration of `Heading` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct Heading; }
 // Forward declaration of `HybridNitroLocationSpec` to properly resolve imports.
@@ -30,6 +36,8 @@ namespace margelo::nitro::nitrolocation { enum class IosPermissionType; }
 namespace margelo::nitro::nitrolocation { enum class LocationPermissionStatus; }
 // Forward declaration of `Location` to properly resolve imports.
 namespace margelo::nitro::nitrolocation { struct Location; }
+// Forward declaration of `StartMonitoringGeofencesResult` to properly resolve imports.
+namespace margelo::nitro::nitrolocation { struct StartMonitoringGeofencesResult; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridNitroLocationSpec_cxx` to properly resolve imports.
@@ -41,12 +49,16 @@ namespace NitroLocation { class HybridNitroLocationSpec_cxx; }
 #include "AndroidPermissionDetail.hpp"
 #include "AndroidProvider.hpp"
 #include "DesiredAccuracy.hpp"
+#include "GeofenceRegion.hpp"
+#include "GeofenceTransitionEvent.hpp"
+#include "GeofenceTransitionType.hpp"
 #include "Heading.hpp"
 #include "HybridNitroLocationSpec.hpp"
 #include "IosDesiredAccuracy.hpp"
 #include "IosPermissionType.hpp"
 #include "Location.hpp"
 #include "LocationPermissionStatus.hpp"
+#include "StartMonitoringGeofencesResult.hpp"
 #include <NitroModules/Null.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
@@ -55,6 +67,7 @@ namespace NitroLocation { class HybridNitroLocationSpec_cxx; }
 #include <functional>
 #include <memory>
 #include <optional>
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -419,33 +432,33 @@ namespace margelo::nitro::nitrolocation::bridge::swift {
     return Func_void_std__vector_Location__Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>
+  // pragma MARK: std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>
   /**
-   * Wrapper struct for `std::variant<nitro::NullType, std::function<void(const std::vector<Location>& / * locations * /)>>`.
+   * Wrapper struct for `std::variant<std::function<void(const std::vector<Location>& / * locations * /)>, nitro::NullType>`.
    * std::variant cannot be used in Swift because of a Swift bug.
    * Not even specializing it works. So we create a wrapper struct.
    */
-  struct std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ final {
-    std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> variant;
-    std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>> variant): variant(variant) { }
-    operator std::variant<nitro::NullType, std::function<void(const std::vector<Location>& /* locations */)>>() const noexcept {
+  struct std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ final {
+    std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> variant;
+    std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType> variant): variant(variant) { }
+    operator std::variant<std::function<void(const std::vector<Location>& /* locations */)>, nitro::NullType>() const noexcept {
       return variant;
     }
     inline size_t index() const noexcept {
       return variant.index();
     }
-    inline nitro::NullType get_0() const noexcept {
+    inline std::function<void(const std::vector<Location>& /* locations */)> get_0() const noexcept {
       return std::get<0>(variant);
     }
-    inline std::function<void(const std::vector<Location>& /* locations */)> get_1() const noexcept {
+    inline nitro::NullType get_1() const noexcept {
       return std::get<1>(variant);
     }
   };
-  inline std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ create_std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(nitro::NullType value) noexcept {
-    return std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(value);
+  inline std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ create_std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(const std::function<void(const std::vector<Location>& /* locations */)>& value) noexcept {
+    return std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(value);
   }
-  inline std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______ create_std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(const std::function<void(const std::vector<Location>& /* locations */)>& value) noexcept {
-    return std__variant_nitro__NullType__std__function_void_const_std__vector_Location______locations______(value);
+  inline std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_ create_std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(nitro::NullType value) noexcept {
+    return std__variant_std__function_void_const_std__vector_Location______locations_______nitro__NullType_(value);
   }
   
   // pragma MARK: std::function<void(const Heading& /* heading */)>
@@ -470,45 +483,170 @@ namespace margelo::nitro::nitrolocation::bridge::swift {
     return Func_void_Heading_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>>
+  // pragma MARK: std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType>
   /**
-   * Wrapper struct for `std::variant<nitro::NullType, std::function<void(const Heading& / * heading * /)>>`.
+   * Wrapper struct for `std::variant<std::function<void(const Heading& / * heading * /)>, nitro::NullType>`.
    * std::variant cannot be used in Swift because of a Swift bug.
    * Not even specializing it works. So we create a wrapper struct.
    */
-  struct std__variant_nitro__NullType__std__function_void_const_Heading_____heading______ final {
-    std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>> variant;
-    std__variant_nitro__NullType__std__function_void_const_Heading_____heading______(std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>> variant): variant(variant) { }
-    operator std::variant<nitro::NullType, std::function<void(const Heading& /* heading */)>>() const noexcept {
+  struct std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_ final {
+    std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType> variant;
+    std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_(std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType> variant): variant(variant) { }
+    operator std::variant<std::function<void(const Heading& /* heading */)>, nitro::NullType>() const noexcept {
       return variant;
     }
     inline size_t index() const noexcept {
       return variant.index();
     }
-    inline nitro::NullType get_0() const noexcept {
+    inline std::function<void(const Heading& /* heading */)> get_0() const noexcept {
       return std::get<0>(variant);
     }
-    inline std::function<void(const Heading& /* heading */)> get_1() const noexcept {
+    inline nitro::NullType get_1() const noexcept {
       return std::get<1>(variant);
     }
   };
-  inline std__variant_nitro__NullType__std__function_void_const_Heading_____heading______ create_std__variant_nitro__NullType__std__function_void_const_Heading_____heading______(nitro::NullType value) noexcept {
-    return std__variant_nitro__NullType__std__function_void_const_Heading_____heading______(value);
+  inline std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_ create_std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_(const std::function<void(const Heading& /* heading */)>& value) noexcept {
+    return std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_(value);
   }
-  inline std__variant_nitro__NullType__std__function_void_const_Heading_____heading______ create_std__variant_nitro__NullType__std__function_void_const_Heading_____heading______(const std::function<void(const Heading& /* heading */)>& value) noexcept {
-    return std__variant_nitro__NullType__std__function_void_const_Heading_____heading______(value);
+  inline std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_ create_std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_(nitro::NullType value) noexcept {
+    return std__variant_std__function_void_const_Heading_____heading_______nitro__NullType_(value);
   }
   
-  // pragma MARK: std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>>
+  // pragma MARK: std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType>
   /**
-   * Wrapper struct for `std::variant<nitro::NullType, std::function<void(LocationPermissionStatus / * status * /)>>`.
+   * Wrapper struct for `std::variant<std::function<void(LocationPermissionStatus / * status * /)>, nitro::NullType>`.
    * std::variant cannot be used in Swift because of a Swift bug.
    * Not even specializing it works. So we create a wrapper struct.
    */
-  struct std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______ final {
-    std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>> variant;
-    std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______(std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>> variant): variant(variant) { }
-    operator std::variant<nitro::NullType, std::function<void(LocationPermissionStatus /* status */)>>() const noexcept {
+  struct std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_ final {
+    std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType> variant;
+    std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_(std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType> variant): variant(variant) { }
+    operator std::variant<std::function<void(LocationPermissionStatus /* status */)>, nitro::NullType>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline std::function<void(LocationPermissionStatus /* status */)> get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline nitro::NullType get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_ create_std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_(const std::function<void(LocationPermissionStatus /* status */)>& value) noexcept {
+    return std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_(value);
+  }
+  inline std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_ create_std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_(nitro::NullType value) noexcept {
+    return std__variant_std__function_void_LocationPermissionStatus____status_______nitro__NullType_(value);
+  }
+  
+  // pragma MARK: std::function<void(const GeofenceTransitionEvent& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const GeofenceTransitionEvent&)>`.
+   */
+  using Func_void_GeofenceTransitionEvent = std::function<void(const GeofenceTransitionEvent& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const GeofenceTransitionEvent& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_GeofenceTransitionEvent_Wrapper final {
+  public:
+    explicit Func_void_GeofenceTransitionEvent_Wrapper(std::function<void(const GeofenceTransitionEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const GeofenceTransitionEvent& /* event */)>>(std::move(func))) {}
+    inline void call(GeofenceTransitionEvent event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const GeofenceTransitionEvent& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_GeofenceTransitionEvent create_Func_void_GeofenceTransitionEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_GeofenceTransitionEvent_Wrapper wrap_Func_void_GeofenceTransitionEvent(Func_void_GeofenceTransitionEvent value) noexcept {
+    return Func_void_GeofenceTransitionEvent_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType>
+  /**
+   * Wrapper struct for `std::variant<std::function<void(const GeofenceTransitionEvent& / * event * /)>, nitro::NullType>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_ final {
+    std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType> variant;
+    std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_(std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType> variant): variant(variant) { }
+    operator std::variant<std::function<void(const GeofenceTransitionEvent& /* event */)>, nitro::NullType>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline std::function<void(const GeofenceTransitionEvent& /* event */)> get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline nitro::NullType get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_ create_std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_(const std::function<void(const GeofenceTransitionEvent& /* event */)>& value) noexcept {
+    return std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_(value);
+  }
+  inline std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_ create_std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_(nitro::NullType value) noexcept {
+    return std__variant_std__function_void_const_GeofenceTransitionEvent_____event_______nitro__NullType_(value);
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<StartMonitoringGeofencesResult>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<StartMonitoringGeofencesResult>>`.
+   */
+  using std__shared_ptr_Promise_StartMonitoringGeofencesResult__ = std::shared_ptr<Promise<StartMonitoringGeofencesResult>>;
+  inline std::shared_ptr<Promise<StartMonitoringGeofencesResult>> create_std__shared_ptr_Promise_StartMonitoringGeofencesResult__() noexcept {
+    return Promise<StartMonitoringGeofencesResult>::create();
+  }
+  inline PromiseHolder<StartMonitoringGeofencesResult> wrap_std__shared_ptr_Promise_StartMonitoringGeofencesResult__(std::shared_ptr<Promise<StartMonitoringGeofencesResult>> promise) noexcept {
+    return PromiseHolder<StartMonitoringGeofencesResult>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const StartMonitoringGeofencesResult& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const StartMonitoringGeofencesResult&)>`.
+   */
+  using Func_void_StartMonitoringGeofencesResult = std::function<void(const StartMonitoringGeofencesResult& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const StartMonitoringGeofencesResult& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_StartMonitoringGeofencesResult_Wrapper final {
+  public:
+    explicit Func_void_StartMonitoringGeofencesResult_Wrapper(std::function<void(const StartMonitoringGeofencesResult& /* result */)>&& func): _function(std::make_unique<std::function<void(const StartMonitoringGeofencesResult& /* result */)>>(std::move(func))) {}
+    inline void call(StartMonitoringGeofencesResult result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const StartMonitoringGeofencesResult& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_StartMonitoringGeofencesResult create_Func_void_StartMonitoringGeofencesResult(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_StartMonitoringGeofencesResult_Wrapper wrap_Func_void_StartMonitoringGeofencesResult(Func_void_StartMonitoringGeofencesResult value) noexcept {
+    return Func_void_StartMonitoringGeofencesResult_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::vector<GeofenceRegion>
+  /**
+   * Specialized version of `std::vector<GeofenceRegion>`.
+   */
+  using std__vector_GeofenceRegion_ = std::vector<GeofenceRegion>;
+  inline std::vector<GeofenceRegion> create_std__vector_GeofenceRegion_(size_t size) noexcept {
+    std::vector<GeofenceRegion> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::variant<nitro::NullType, GeofenceTransitionEvent>
+  /**
+   * Wrapper struct for `std::variant<nitro::NullType, GeofenceTransitionEvent>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_nitro__NullType__GeofenceTransitionEvent_ final {
+    std::variant<nitro::NullType, GeofenceTransitionEvent> variant;
+    std__variant_nitro__NullType__GeofenceTransitionEvent_(std::variant<nitro::NullType, GeofenceTransitionEvent> variant): variant(variant) { }
+    operator std::variant<nitro::NullType, GeofenceTransitionEvent>() const noexcept {
       return variant;
     }
     inline size_t index() const noexcept {
@@ -517,15 +655,15 @@ namespace margelo::nitro::nitrolocation::bridge::swift {
     inline nitro::NullType get_0() const noexcept {
       return std::get<0>(variant);
     }
-    inline std::function<void(LocationPermissionStatus /* status */)> get_1() const noexcept {
+    inline GeofenceTransitionEvent get_1() const noexcept {
       return std::get<1>(variant);
     }
   };
-  inline std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______ create_std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______(nitro::NullType value) noexcept {
-    return std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______(value);
+  inline std__variant_nitro__NullType__GeofenceTransitionEvent_ create_std__variant_nitro__NullType__GeofenceTransitionEvent_(nitro::NullType value) noexcept {
+    return std__variant_nitro__NullType__GeofenceTransitionEvent_(value);
   }
-  inline std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______ create_std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______(const std::function<void(LocationPermissionStatus /* status */)>& value) noexcept {
-    return std__variant_nitro__NullType__std__function_void_LocationPermissionStatus____status______(value);
+  inline std__variant_nitro__NullType__GeofenceTransitionEvent_ create_std__variant_nitro__NullType__GeofenceTransitionEvent_(const GeofenceTransitionEvent& value) noexcept {
+    return std__variant_nitro__NullType__GeofenceTransitionEvent_(value);
   }
   
   // pragma MARK: std::shared_ptr<HybridNitroLocationSpec>
@@ -583,6 +721,24 @@ namespace margelo::nitro::nitrolocation::bridge::swift {
   }
   inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
     return Result<void>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<StartMonitoringGeofencesResult>>>
+  using Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___ = Result<std::shared_ptr<Promise<StartMonitoringGeofencesResult>>>;
+  inline Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___ create_Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___(const std::shared_ptr<Promise<StartMonitoringGeofencesResult>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<StartMonitoringGeofencesResult>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___ create_Result_std__shared_ptr_Promise_StartMonitoringGeofencesResult___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<StartMonitoringGeofencesResult>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::variant<nitro::NullType, GeofenceTransitionEvent>>
+  using Result_std__variant_nitro__NullType__GeofenceTransitionEvent__ = Result<std::variant<nitro::NullType, GeofenceTransitionEvent>>;
+  inline Result_std__variant_nitro__NullType__GeofenceTransitionEvent__ create_Result_std__variant_nitro__NullType__GeofenceTransitionEvent__(const std::variant<nitro::NullType, GeofenceTransitionEvent>& value) noexcept {
+    return Result<std::variant<nitro::NullType, GeofenceTransitionEvent>>::withValue(value);
+  }
+  inline Result_std__variant_nitro__NullType__GeofenceTransitionEvent__ create_Result_std__variant_nitro__NullType__GeofenceTransitionEvent__(const std::exception_ptr& error) noexcept {
+    return Result<std::variant<nitro::NullType, GeofenceTransitionEvent>>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrolocation::bridge::swift
