@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-location",
-  "version": "0.1.4-alpha.0",
+  "version": "0.1.4-alpha.1",
   "description": "Location package with Nitro support",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
