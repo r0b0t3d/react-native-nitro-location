@@ -42,16 +42,16 @@ import kotlin.coroutines.suspendCoroutine
 class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
 
     // Callback props
-    override var onLocationUpdate: Variant_NullType__locations__Array_Location______Unit =
-        Variant_NullType__locations__Array_Location______Unit.First(NullType.NULL)
-    override var onHeadingUpdate: Variant_NullType__heading__Heading_____Unit =
-        Variant_NullType__heading__Heading_____Unit.First(NullType.NULL)
-    override var onPermissionUpdate: Variant_NullType__status__LocationPermissionStatus_____Unit =
-        Variant_NullType__status__LocationPermissionStatus_____Unit.First(NullType.NULL)
-    override var onSignificantLocationUpdate: Variant_NullType__locations__Array_Location______Unit =
-        Variant_NullType__locations__Array_Location______Unit.First(NullType.NULL)
-    override var onGeofenceTransition: Variant_NullType__event__GeofenceTransitionEvent_____Unit =
-        Variant_NullType__event__GeofenceTransitionEvent_____Unit.First(NullType.NULL)
+    override var onLocationUpdate: Variant__locations__Array_Location______Unit_NullType =
+        Variant__locations__Array_Location______Unit_NullType.Second(NullType.NULL)
+    override var onHeadingUpdate: Variant__heading__Heading_____Unit_NullType =
+        Variant__heading__Heading_____Unit_NullType.Second(NullType.NULL)
+    override var onPermissionUpdate: Variant__status__LocationPermissionStatus_____Unit_NullType =
+        Variant__status__LocationPermissionStatus_____Unit_NullType.Second(NullType.NULL)
+    override var onSignificantLocationUpdate: Variant__locations__Array_Location______Unit_NullType =
+        Variant__locations__Array_Location______Unit_NullType.Second(NullType.NULL)
+    override var onGeofenceTransition: Variant__event__GeofenceTransitionEvent_____Unit_NullType =
+        Variant__event__GeofenceTransitionEvent_____Unit_NullType.Second(NullType.NULL)
 
     private val context: ReactApplicationContext
         get() = NitroModules.applicationContext ?: throw Error("No context - NitroModules.applicationContext was null!")
@@ -183,7 +183,7 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
             override fun onLocationResult(result: LocationResult) {
                 val locs = result.locations.map { mapLocation(it) }.toTypedArray()
                 if (locs.isNotEmpty()) {
-                    onLocationUpdate.asSecondOrNull()?.invoke(locs)
+                    onLocationUpdate.asFirstOrNull()?.invoke(locs)
                 }
             }
         }
@@ -236,7 +236,7 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
             override fun onLocationResult(result: LocationResult) {
                 val locs = result.locations.map { mapLocation(it) }.toTypedArray()
                 if (locs.isNotEmpty()) {
-                    onSignificantLocationUpdate.asSecondOrNull()?.invoke(locs)
+                    onSignificantLocationUpdate.asFirstOrNull()?.invoke(locs)
                 }
             }
         }
@@ -391,7 +391,7 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
         SensorManager.getOrientation(rotationMatrix, orientation)
         val azimuthDeg = Math.toDegrees(orientation[0].toDouble())
         val heading = if (azimuthDeg < 0) azimuthDeg + 360 else azimuthDeg
-        onHeadingUpdate.asSecondOrNull()?.invoke(Heading(heading))
+        onHeadingUpdate.asFirstOrNull()?.invoke(Heading(heading))
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -422,11 +422,11 @@ class NitroLocation : HybridNitroLocationSpec(), SensorEventListener {
 
     // MARK: - Legacy fallbacks (no Play Services)
     private val legacyLocationListener = LocationListener { location ->
-        onLocationUpdate.asSecondOrNull()?.invoke(arrayOf(mapLocation(location)))
+        onLocationUpdate.asFirstOrNull()?.invoke(arrayOf(mapLocation(location)))
     }
 
     private val legacySignificantLocationListener = LocationListener { location ->
-        onSignificantLocationUpdate.asSecondOrNull()?.invoke(arrayOf(mapLocation(location)))
+        onSignificantLocationUpdate.asFirstOrNull()?.invoke(arrayOf(mapLocation(location)))
     }
 
     private fun startLocationUpdatesLegacy() {

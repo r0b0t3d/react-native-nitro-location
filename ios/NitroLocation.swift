@@ -100,13 +100,13 @@ final class NitroLocation: HybridNitroLocationSpec {
 
   // MARK: - Callback Properties
 
-  var onLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
-  var onHeadingUpdate: Variant_NullType____heading__Heading_____Void = .first(.null)
-  var onPermissionUpdate: Variant_NullType____status__LocationPermissionStatus_____Void = .first(.null)
-  var onSignificantLocationUpdate: Variant_NullType____locations___Location______Void = .first(.null)
-  var onGeofenceTransition: Variant_NullType____event__GeofenceTransitionEvent_____Void = .first(.null) {
+  var onLocationUpdate: Variant____locations___Location______Void_NullType = .second(.null)
+  var onHeadingUpdate: Variant____heading__Heading_____Void_NullType = .second(.null)
+  var onPermissionUpdate: Variant____status__LocationPermissionStatus_____Void_NullType = .second(.null)
+  var onSignificantLocationUpdate: Variant____locations___Location______Void_NullType = .second(.null)
+  var onGeofenceTransition: Variant____event__GeofenceTransitionEvent_____Void_NullType = .second(.null) {
     didSet {
-      guard case .second(let callback) = onGeofenceTransition, !pendingGeofenceTransitions.isEmpty else { return }
+      guard case .first(let callback) = onGeofenceTransition, !pendingGeofenceTransitions.isEmpty else { return }
       let buffered = pendingGeofenceTransitions
       pendingGeofenceTransitions.removeAll()
       buffered.forEach(callback)
@@ -386,11 +386,11 @@ final class NitroLocation: HybridNitroLocationSpec {
     let mapped = locations.map(Self.mapLocation)
 
     if manager === locationManager, isStreamingUpdates {
-      if case .second(let callback) = onLocationUpdate { callback(mapped) }
+      if case .first(let callback) = onLocationUpdate { callback(mapped) }
     }
 
     if manager === significantLocationManager, isMonitoringSignificant {
-      if case .second(let callback) = onSignificantLocationUpdate { callback(mapped) }
+      if case .first(let callback) = onSignificantLocationUpdate { callback(mapped) }
     }
 
     guard manager === locationManager else { return }
@@ -413,14 +413,14 @@ final class NitroLocation: HybridNitroLocationSpec {
     let heading = newHeading.trueHeading >= 0
       ? newHeading.trueHeading
       : newHeading.magneticHeading
-    if case .second(let callback) = onHeadingUpdate {
+    if case .first(let callback) = onHeadingUpdate {
       callback(Heading(heading: heading))
     }
   }
 
   fileprivate func handleAuthChange(_ status: CLAuthorizationStatus) {
     let mapped = Self.mapAuthStatus(status)
-    if case .second(let callback) = onPermissionUpdate { callback(mapped) }
+    if case .first(let callback) = onPermissionUpdate { callback(mapped) }
 
     guard let continuation = permissionContinuation else { return }
 
@@ -453,7 +453,7 @@ final class NitroLocation: HybridNitroLocationSpec {
 
   fileprivate func handleGeofenceTransition(_ region: CLRegion, type: GeofenceTransitionType) {
     let event = GeofenceTransitionEvent(identifier: region.identifier, type: type)
-    if case .second(let callback) = onGeofenceTransition {
+    if case .first(let callback) = onGeofenceTransition {
       callback(event)
     } else {
       bufferGeofenceTransition(event)
